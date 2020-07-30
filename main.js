@@ -896,7 +896,9 @@ class BoardCanvasComponent {
     }
     ngOnInit() { }
     ngAfterViewInit() {
+        fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Object.prototype.transparentCorners = false;
         this.olgaBoard = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Canvas(this.UUID + '-board');
+        this.olgaBoard.selection = false;
         const waitCount = this.loadPieces();
         waitCount.subscribe((count) => {
             if (count >= 12) {
@@ -1033,7 +1035,6 @@ class BoardCanvasComponent {
                     tile.set('lockMovementX', true);
                     tile.set('lockMovementY', true);
                     tile.set('lockRotation', true);
-                    tile.set('selectable', false);
                     tile.set('lockScalingX', true);
                     tile.set('lockScalingY', true);
                     tile.set('lockUniScaling', true);
