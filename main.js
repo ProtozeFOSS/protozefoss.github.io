@@ -133,6 +133,12 @@ class Olga {
             }
         }
     }
+    touchMoved(event) {
+        if (this.gameScoreComponent && this.gameScoreComponent.resizing) {
+            this.gameScoreComponent.resizeTouchEvent(event);
+            this.gameScoreComponent.resizing = false;
+        }
+    }
     loadPGN(pgn) {
         this.gameService.loadPGN(pgn);
     }
@@ -163,9 +169,9 @@ Olga.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.gameScoreComponent = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.canvasBoardComponent = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.appContainer = _t.first);
-    } }, inputs: { pgnString: "pgnString", olgaID: "olgaID" }, outputs: { gameScoreElement: "gameScoreElement", boardElement: "boardElement", controlsElement: "controlsElement", gameScoreWidth: "gameScoreWidth", oldWidth: "oldWidth" }, decls: 6, vars: 7, consts: [[1, "olga-container", 3, "id", "mousemove"], ["olgaContainer", ""], [3, "id", "UUID", "theme"], ["olgaBoard", ""], [3, "id", "UUID", "contextmenu"], [3, "id"]], template: function Olga_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { pgnString: "pgnString", olgaID: "olgaID" }, outputs: { gameScoreElement: "gameScoreElement", boardElement: "boardElement", controlsElement: "controlsElement", gameScoreWidth: "gameScoreWidth", oldWidth: "oldWidth" }, decls: 6, vars: 7, consts: [[1, "olga-container", 3, "id", "touchmove", "mousemove"], ["olgaContainer", ""], [3, "id", "UUID", "theme"], ["olgaBoard", ""], [3, "id", "UUID", "contextmenu"], [3, "id"]], template: function Olga_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0, 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("mousemove", function Olga_Template_div_mousemove_0_listener($event) { return ctx.mouseMoved($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("touchmove", function Olga_Template_div_touchmove_0_listener($event) { return ctx.touchMoved($event); })("mousemove", function Olga_Template_div_mousemove_0_listener($event) { return ctx.mouseMoved($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "canvas-chessboard", 2, 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "app-game-score-ux", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("contextmenu", function Olga_Template_app_game_score_ux_contextmenu_4_listener($event) { return ctx.ignoreEvent($event); });
@@ -619,6 +625,22 @@ class CanvasChessBoard {
             this.selectedPiece = null;
         }
     }
+    dragPiece(e) {
+        const event = e.e;
+        let row = Math.ceil(event.y / this.tileSize) - 1;
+        let col = Math.ceil(event.x / this.tileSize) - 1;
+        if (this.orientation == 'white') {
+            row = Math.ceil((this.size - event.y) / this.tileSize) - 1;
+        }
+        else {
+            col = Math.ceil((this.size - event.x) / this.tileSize) - 1;
+        }
+        const tileIndex = ((row * 8) + col);
+        if (tileIndex >= 0 && tileIndex < 64) {
+            this.selectedPiece = this.pieces[tileIndex];
+            //this.highlightTile(tileIndex);
+        }
+    }
     selectPiece(e) {
         const event = e.e;
         let row = Math.ceil(event.y / this.tileSize) - 1;
@@ -658,7 +680,7 @@ class CanvasChessBoard {
         if (this.canvas) {
             this.canvas.on('object:moved', this.checkValidDrop.bind(this));
             this.canvas.on('mouse:down', this.selectPiece.bind(this));
-            this.canvas.on('touch:drag', this.selectPiece.bind(this));
+            this.canvas.on('touch:drag', this.dragPiece.bind(this));
         }
     }
     generateTiles() {
@@ -1534,6 +1556,11 @@ class GamescoreUxComponent {
         this.ngOnInit();
     }
     resizeHandleEvent(event) {
+        if (this.resizing) {
+            this.resizeScore();
+        }
+    }
+    resizeTouchEvent(event) {
         if (this.resizing) {
             this.resizeScore();
         }
