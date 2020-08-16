@@ -123,6 +123,7 @@ class Olga {
         if (this.gameScoreComponent) {
             this.gameService.attachScore(this.gameScoreComponent);
             this.gameScoreComponent.resizeHandleEvent = this.layoutService.onSliderDrag.bind(this.layoutService);
+            this.gameScoreComponent.resizeTouchEvent = this.layoutService.onSliderTouch.bind(this.layoutService);
         }
     }
     mouseMoved(event) {
@@ -491,6 +492,7 @@ class CanvasChessBoard {
             }
         });
         this.canvas.hoverCursor = 'arrow';
+        this.canvas.allowTouchScrolling = true;
         this.setInteractive(this.interactive);
     }
     addPiece(tile, color, role) {
@@ -698,7 +700,6 @@ class CanvasChessBoard {
         if (this.canvas) {
             this.canvas.on('object:moved', this.checkValidDrop.bind(this));
             this.canvas.on('mouse:down', this.selectPiece.bind(this));
-            this.canvas.on('touch:drag', this.dragPiece.bind(this));
         }
     }
     generateTiles() {
@@ -797,6 +798,7 @@ class CanvasChessBoard {
                         const obj = fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].util.groupSVGElements(objects, options);
                         obj.left = -400;
                         obj.top = 0;
+                        obj.on('touch:drag', this.dragPiece.bind(this));
                         this.pieceMap.set(piece, obj);
                         subject.next(subject.value + 1);
                     });
@@ -2608,6 +2610,63 @@ class LayoutService {
         window.setTimeout(() => {
             this.resizeLayout();
         }, 250);
+    }
+    onSliderTouch(event) {
+        if (event.touches.length > 0 && this.landscapeOrientation && event && event.touches[0].clientX > 64) {
+            if (this.olga && this.appContainer) {
+                let gsSize = window.innerWidth - event.touches[0].clientX;
+                const width = this.appContainer.nativeElement.clientWidth;
+                const height = this.appContainer.nativeElement.clientHeight;
+                switch (this.preferredLayout) {
+                    case 'auto': {
+                        if (width > height) {
+                            this.resizeToLandscape(width, height, gsSize);
+                        }
+                        else {
+                            this.resizeToPortrait(width, height, gsSize);
+                        }
+                        break;
+                    }
+                    case 'landscape': {
+                        this.resizeToLandscape(width, height, gsSize);
+                        break;
+                    }
+                    case 'portrait': {
+                        this.resizeToPortrait(width, height, gsSize);
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            if (!this.landscapeOrientation && event && event.touches[0].clientY > 64) {
+                if (this.olga && this.appContainer) {
+                    let gsSize = window.innerHeight - event.touches[0].clientY;
+                    const width = this.appContainer.nativeElement.clientWidth;
+                    const height = this.appContainer.nativeElement.clientHeight;
+                    switch (this.preferredLayout) {
+                        case 'auto': {
+                            if (width > height) {
+                                this.resizeToLandscape(width, height, gsSize);
+                            }
+                            else {
+                                console.log('GSSize vertical slider: ' + gsSize);
+                                this.resizeToPortrait(width, height, gsSize);
+                            }
+                            break;
+                        }
+                        case 'landscape': {
+                            this.resizeToLandscape(width, height, gsSize);
+                            break;
+                        }
+                        case 'portrait': {
+                            this.resizeToPortrait(width, height, gsSize);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
     onSliderDrag(event) {
         if (this.landscapeOrientation && event && event.clientX > 64) {
