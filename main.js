@@ -170,12 +170,12 @@ Olga.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.gameScoreComponent = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.canvasBoardComponent = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.appContainer = _t.first);
-    } }, inputs: { pgnString: "pgnString", olgaID: "olgaID" }, outputs: { gameScoreElement: "gameScoreElement", boardElement: "boardElement", controlsElement: "controlsElement", gameScoreWidth: "gameScoreWidth", oldWidth: "oldWidth" }, decls: 6, vars: 7, consts: [[1, "olga-container", 3, "id", "touchmove", "mousemove"], ["olgaContainer", ""], [3, "id", "UUID", "theme", "touchstart"], ["canvasBoardComponent", ""], [3, "id", "UUID", "contextmenu"], [3, "id"]], template: function Olga_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { pgnString: "pgnString", olgaID: "olgaID" }, outputs: { gameScoreElement: "gameScoreElement", boardElement: "boardElement", controlsElement: "controlsElement", gameScoreWidth: "gameScoreWidth", oldWidth: "oldWidth" }, decls: 6, vars: 7, consts: [[1, "olga-container", 3, "id", "touchmove", "mousemove"], ["olgaContainer", ""], [3, "id", "UUID", "theme", "touchstart", "touchend"], ["canvasBoardComponent", ""], [3, "id", "UUID", "contextmenu"], [3, "id"]], template: function Olga_Template(rf, ctx) { if (rf & 1) {
         const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("touchmove", function Olga_Template_div_touchmove_0_listener($event) { return ctx.touchMoved($event); })("mousemove", function Olga_Template_div_mousemove_0_listener($event) { return ctx.mouseMoved($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "canvas-chessboard", 2, 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("touchstart", function Olga_Template_canvas_chessboard_touchstart_2_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r2); const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](3); return _r1.touchStart($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("touchstart", function Olga_Template_canvas_chessboard_touchstart_2_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r2); const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](3); return _r1.touchStart($event); })("touchend", function Olga_Template_canvas_chessboard_touchend_2_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r2); const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](3); return _r1.touchEnd($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "app-game-score-ux", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("contextmenu", function Olga_Template_app_game_score_ux_contextmenu_4_listener($event) { return ctx.ignoreEvent($event); });
@@ -475,6 +475,7 @@ class CanvasChessBoard {
         this.canvas = null;
         this.orientation = 'white';
         this.selectedPiece = null;
+        this.touching = false;
         this.gameService.attachBoard(this);
         if (this.gameService.game.value !== null) {
             this.setBoardToGamePosition();
@@ -602,20 +603,33 @@ class CanvasChessBoard {
     checkValidDrop(e) {
         var _a;
         if ((_a = this.selectedPiece) === null || _a === void 0 ? void 0 : _a.object) {
-            const event = e.e;
-            let row = Math.ceil(event.y / this.tileSize) - 1;
-            let col = Math.ceil(event.x / this.tileSize) - 1;
-            if (this.orientation == 'white') {
-                row = Math.ceil((this.size - event.y) / this.tileSize) - 1;
+            let x = 0;
+            let y = 0;
+            if (this.touching) {
+                const event = e.e;
+                if (event.touches.length) {
+                    x = event.touches[0].clientX;
+                    y = event.touches[0].clientY;
+                }
             }
             else {
-                col = Math.ceil((this.size - event.x) / this.tileSize) - 1;
+                const event = e.e;
+                x = event.x;
+                y = event.y;
+            }
+            let row = Math.ceil(y / this.tileSize) - 1;
+            let col = Math.ceil(x / this.tileSize) - 1;
+            if (this.orientation == 'white') {
+                row = Math.ceil((this.size - y) / this.tileSize) - 1;
+            }
+            else {
+                col = Math.ceil((this.size - x) / this.tileSize) - 1;
             }
             const tile = ((row * 8) + col);
             const move = new _services_game_service__WEBPACK_IMPORTED_MODULE_3__["ChessMove"]();
             move.from = this.selectedPiece.tile;
             move.to = tile;
-            if (event.x < 0 || event.x > this.size || event.y > this.size || event.y < 0) {
+            if (x < 0 || x > this.size || y > this.size || y < 0) {
                 this.resetMove(move);
             }
             else {
@@ -659,10 +673,14 @@ class CanvasChessBoard {
             }
             const tileIndex = ((row * 8) + col);
             if (tileIndex >= 0 && tileIndex < 64) {
+                this.touching = true;
                 this.selectedPiece = this.pieces[tileIndex];
                 //this.highlightTile(tileIndex);
             }
         }
+    }
+    touchEnd(event) {
+        this.touching = false;
     }
     selectPiece(e) {
         const event = e.e;
@@ -939,7 +957,7 @@ class CanvasChessBoard {
     }
 }
 CanvasChessBoard.ɵfac = function CanvasChessBoard_Factory(t) { return new (t || CanvasChessBoard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"])); };
-CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tiles: "tiles", canvas: "canvas", orientation: "orientation", selectedPiece: "selectedPiece" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
+CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tiles: "tiles", canvas: "canvas", orientation: "orientation", selectedPiece: "selectedPiece", touching: "touching" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "canvas", 0);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("top", 0)("left", 0)("width", ctx.size, "px")("height", ctx.size, "px")("z-index", 2);
@@ -982,6 +1000,8 @@ CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
         }], selectedPiece: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }, {
+            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
+        }], touching: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }] }); })();
 
