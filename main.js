@@ -1466,7 +1466,7 @@ function GamescoreUxComponent_mat_card_content_5_Template(rf, ctx) { if (rf & 1)
 } if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](2, 1, ctx_r1.gameService.currentScore));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](2, 1, ctx_r1.gameService._items));
 } }
 ;
 var ScoreViewType;
@@ -2160,6 +2160,7 @@ class ChessGame {
         this.position = null;
         this.currentNode = null;
         this.gameScore = [];
+        this.score = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](null);
         this.gameVariations = [];
         this.variation = null;
         this.startNode = null;
@@ -2293,6 +2294,7 @@ class ChessGame {
         }
         items[0].current = true;
         this.gameScore = items;
+        this.score.next(this.gameScore);
     }
     // navigation
     advance(updateBoard = true) {
@@ -2418,6 +2420,9 @@ class GameService {
             this._game = game;
             this.game.next(game);
             this._game.setGame(first);
+            if (this._game.score.value !== null) {
+                this._items.next(this._game.score.value);
+            }
         }
     }
     makeMove(move, fromPGN = false) {
