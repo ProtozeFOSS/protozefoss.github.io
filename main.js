@@ -607,9 +607,9 @@ class CanvasChessBoard {
             let y = 0;
             if (this.touching) {
                 const event = e.e;
-                if (event.touches.length) {
-                    x = event.touches[0].clientX;
-                    y = event.touches[0].clientY;
+                if (event.changedTouches.length) {
+                    x = event.changedTouches[0].clientX;
+                    y = event.changedTouches[0].clientY;
                 }
                 this.touching = false;
             }
