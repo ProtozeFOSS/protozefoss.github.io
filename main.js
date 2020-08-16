@@ -1553,16 +1553,20 @@ class GamescoreUxComponent {
     }
     startTouch(event) {
         this.previousCursor = document.body.style.cursor;
-        this.resizing = true;
         const touchPoint = event.touches[0];
         if (touchPoint) {
             if (this.layoutService.resizeElement) {
-                if (parseInt(this.layoutService.resizeElement.style.left, 10) >= touchPoint.clientX &&
-                    parseInt(this.layoutService.resizeElement.style.top, 10) >= touchPoint.clientY &&
-                    parseInt(this.layoutService.resizeElement.style.top, 10) <= touchPoint.clientY + parseInt(this.layoutService.resizeElement.style.height, 10) &&
-                    parseInt(this.layoutService.resizeElement.style.left, 10) <= touchPoint.clientX + parseInt(this.layoutService.resizeElement.style.width, 10)) {
+                const left = parseInt(this.layoutService.resizeElement.style.left, 10);
+                const top = parseInt(this.layoutService.resizeElement.style.top, 10);
+                const height = parseInt(this.layoutService.resizeElement.style.height, 10);
+                const width = parseInt(this.layoutService.resizeElement.style.width, 10);
+                if (left >= touchPoint.clientX &&
+                    top >= touchPoint.clientY &&
+                    (top + height) <= touchPoint.clientY &&
+                    (left + width) <= touchPoint.clientX) {
                     this.layoutService.resizeElement.style.cursor = 'grab';
                     console.log('Starting touch on resize handle');
+                    this.resizing = true;
                 }
                 document.body.style.cursor = 'grab';
             }
