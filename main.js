@@ -667,18 +667,15 @@ class CanvasChessBoard {
     selectPiece(e) {
         let x = 0;
         let y = 0;
-        if (this.touching) {
+        const event = e.e;
+        x = event.x;
+        y = event.y;
+        if (x === undefined || y === undefined) {
             const event = e.e;
             if (event.touches.length) {
                 x = event.touches[0].clientX;
                 y = event.touches[0].clientY;
             }
-            this.touching = false;
-        }
-        else {
-            const event = e.e;
-            x = event.x;
-            y = event.y;
         }
         let row = Math.ceil(y / this.tileSize) - 1;
         let col = Math.ceil(x / this.tileSize) - 1;
