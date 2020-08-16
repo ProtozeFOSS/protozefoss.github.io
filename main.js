@@ -641,6 +641,24 @@ class CanvasChessBoard {
             //this.highlightTile(tileIndex);
         }
     }
+    touchStart(event) {
+        if (event.touches.length) {
+            const point = event.touches[0];
+            let row = Math.ceil(point.clientY / this.tileSize) - 1;
+            let col = Math.ceil(point.clientX / this.tileSize) - 1;
+            if (this.orientation == 'white') {
+                row = Math.ceil((this.size - point.clientY) / this.tileSize) - 1;
+            }
+            else {
+                col = Math.ceil((this.size - point.clientX) / this.tileSize) - 1;
+            }
+            const tileIndex = ((row * 8) + col);
+            if (tileIndex >= 0 && tileIndex < 64) {
+                this.selectedPiece = this.pieces[tileIndex];
+                //this.highlightTile(tileIndex);
+            }
+        }
+    }
     selectPiece(e) {
         const event = e.e;
         let row = Math.ceil(event.y / this.tileSize) - 1;
@@ -916,8 +934,10 @@ class CanvasChessBoard {
     }
 }
 CanvasChessBoard.ɵfac = function CanvasChessBoard_Factory(t) { return new (t || CanvasChessBoard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"])); };
-CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tiles: "tiles", canvas: "canvas", orientation: "orientation", selectedPiece: "selectedPiece" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "canvas", 0);
+CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tiles: "tiles", canvas: "canvas", orientation: "orientation", selectedPiece: "selectedPiece" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width", "touchstart"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "canvas", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("touchstart", function CanvasChessBoard_Template_canvas_touchstart_0_listener($event) { return ctx.touchStart($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("top", 0)("left", 0)("width", ctx.size, "px")("height", ctx.size, "px")("z-index", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpropertyInterpolate1"]("id", "", ctx.UUID, "-canvas");
@@ -1556,19 +1576,7 @@ class GamescoreUxComponent {
         const touchPoint = event.touches[0];
         if (touchPoint) {
             if (this.layoutService.resizeElement) {
-                const left = parseInt(this.layoutService.resizeElement.style.left, 10);
-                const top = parseInt(this.layoutService.resizeElement.style.top, 10);
-                const height = parseInt(this.layoutService.resizeElement.style.height, 10);
-                const width = parseInt(this.layoutService.resizeElement.style.width, 10);
-                if (left >= touchPoint.clientX &&
-                    top >= touchPoint.clientY &&
-                    (top + height) <= touchPoint.clientY &&
-                    (left + width) <= touchPoint.clientX) {
-                    this.layoutService.resizeElement.style.cursor = 'grab';
-                    console.log('Starting touch on resize handle');
-                    this.resizing = true;
-                }
-                document.body.style.cursor = 'grab';
+                this.resizing = true;
             }
         }
     }
