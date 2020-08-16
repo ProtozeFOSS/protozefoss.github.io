@@ -645,22 +645,6 @@ class CanvasChessBoard {
             this.selectedPiece = null;
         }
     }
-    dragPiece(e) {
-        const event = e.e;
-        let row = Math.ceil(event.y / this.tileSize) - 1;
-        let col = Math.ceil(event.x / this.tileSize) - 1;
-        if (this.orientation == 'white') {
-            row = Math.ceil((this.size - event.y) / this.tileSize) - 1;
-        }
-        else {
-            col = Math.ceil((this.size - event.x) / this.tileSize) - 1;
-        }
-        const tileIndex = ((row * 8) + col);
-        if (tileIndex >= 0 && tileIndex < 64) {
-            this.selectedPiece = this.pieces[tileIndex];
-            //this.highlightTile(tileIndex);
-        }
-    }
     touchStart(event) {
         if (event.touches.length) {
             const point = event.touches[0];
@@ -681,14 +665,28 @@ class CanvasChessBoard {
         }
     }
     selectPiece(e) {
-        const event = e.e;
-        let row = Math.ceil(event.y / this.tileSize) - 1;
-        let col = Math.ceil(event.x / this.tileSize) - 1;
-        if (this.orientation == 'white') {
-            row = Math.ceil((this.size - event.y) / this.tileSize) - 1;
+        let x = 0;
+        let y = 0;
+        if (this.touching) {
+            const event = e.e;
+            if (event.touches.length) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            }
+            this.touching = false;
         }
         else {
-            col = Math.ceil((this.size - event.x) / this.tileSize) - 1;
+            const event = e.e;
+            x = event.x;
+            y = event.y;
+        }
+        let row = Math.ceil(y / this.tileSize) - 1;
+        let col = Math.ceil(x / this.tileSize) - 1;
+        if (this.orientation == 'white') {
+            row = Math.ceil((this.size - y) / this.tileSize) - 1;
+        }
+        else {
+            col = Math.ceil((this.size - x) / this.tileSize) - 1;
         }
         const tileIndex = ((row * 8) + col);
         if (tileIndex >= 0 && tileIndex < 64) {
@@ -817,7 +815,6 @@ class CanvasChessBoard {
                         const obj = fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].util.groupSVGElements(objects, options);
                         obj.left = -400;
                         obj.top = 0;
-                        obj.on('touch:drag', this.dragPiece.bind(this));
                         this.pieceMap.set(piece, obj);
                         subject.next(subject.value + 1);
                     });
