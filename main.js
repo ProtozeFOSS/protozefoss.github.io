@@ -643,7 +643,7 @@ class CanvasChessBoard {
             group.push(bg);
             let pieceImage = null;
             // Create the title text "Promotion" - white, subtle
-            const title = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text('Promotion', { fontWeight: '100', fontSize: 64, fontFamily: 'Courier New' });
+            const title = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text('Promotion', { fontWeight: '100', fontSize: this.size * .07, fontFamily: 'Courier New' });
             title.set('lockMovementX', true);
             title.set('lockMovementY', true);
             title.set('lockRotation', true);
@@ -696,7 +696,7 @@ class CanvasChessBoard {
             if (move.color === 'b') {
                 color = 'Black';
             }
-            const prompt = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(color + ' has triggered promotion at', { fontSize: 36 });
+            const prompt = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(color + ' has triggered promotion at', { fontSize: this.size * .04 });
             prompt.set('lockMovementX', true);
             prompt.set('lockMovementY', true);
             prompt.set('lockRotation', true);
@@ -709,12 +709,12 @@ class CanvasChessBoard {
             prompt.setColor('white');
             prompt.set('originX', 'center');
             prompt.set('originY', 'center');
-            prompt.set('left', (this.size * .5) - 48);
+            prompt.set('left', (this.size * .5) - 24);
             prompt.set('top', this.size * .53);
             prompt.setCoords();
             group.push(prompt);
             // Create text to right of triggered text with move
-            const atText = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(SquareNames[tileIndex], { fontWeight: 'bold', fontSize: 44 });
+            const atText = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(SquareNames[tileIndex], { fontSize: this.size * .055 });
             atText.set('lockMovementX', true);
             atText.set('lockMovementY', true);
             atText.set('lockRotation', true);
@@ -730,7 +730,7 @@ class CanvasChessBoard {
             atText.set('originY', 'center');
             const promptWidth = prompt.get('width');
             const promptLeft = prompt.get('left');
-            atText.set('left', (promptLeft ? promptLeft : this.size * .2) + ((promptWidth !== undefined ? promptWidth : 20) / 2) + 38);
+            atText.set('left', (promptLeft ? promptLeft : this.size * .2) + ((promptWidth !== undefined ? promptWidth : 20) / 2) + this.size * .035);
             atText.set('top', this.size * .53);
             atText.setCoords();
             group.push(atText);
@@ -942,6 +942,8 @@ class CanvasChessBoard {
             this.promotionDialog.set('hasControls', false);
             this.promotionDialog.set('hasBorders', false);
             this.promotionDialog.set('selectable', false);
+            this.promotionDialog.scaleToHeight(this.size);
+            this.promotionDialog.scaleToWidth(this.size);
             (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.add(this.promotionDialog);
             this.promotionDialog.moveTo(500);
             if (this.knightButton) {
@@ -3032,17 +3034,9 @@ class GameService {
         }
     }
     moveToEnd() {
-        const move = new ChessMove();
-        move.to = 61;
-        move.from = 53;
-        move.color = 'w';
-        move.role = 'P';
-        if (this._board) {
-            this._board.showPromotionDialog(move);
+        if (this._game && !this._game.isFinalPosition()) {
+            this._game.moveToEnd();
         }
-        // if (this._game && !this._game.isFinalPosition()) {
-        //   this._game.moveToEnd();
-        // }
     }
     loadPGN(pgn) {
         // parse potential multiple games
