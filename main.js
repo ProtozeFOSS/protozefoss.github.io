@@ -137,7 +137,6 @@ class Olga {
     touchMoved(event) {
         if (this.gameScoreComponent && this.gameScoreComponent.resizing) {
             this.gameScoreComponent.resizeTouchEvent(event);
-            this.gameScoreComponent.resizing = false;
         }
     }
     loadPGN(pgn) {
@@ -376,7 +375,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
                     _settings_settings_board_settings_board_component__WEBPACK_IMPORTED_MODULE_19__["SettingsBoardComponent"],
                     _game_score_menu_game_score_item_menu_game_score_item_component__WEBPACK_IMPORTED_MODULE_23__["MenuGameScoreItemComponent"],
                     _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_27__["CanvasChessBoard"],
-                    _controls_olga_controls_olga_controls_component__WEBPACK_IMPORTED_MODULE_28__["OlgaControlsComponent"],
+                    _controls_olga_controls_olga_controls_component__WEBPACK_IMPORTED_MODULE_28__["OlgaControlsComponent"]
                 ],
                 imports: [
                     _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -441,6 +440,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fabric__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fabric__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
 /* harmony import */ var _services_game_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/game.service */ "./src/app/services/game.service.ts");
+/* harmony import */ var _services_colors_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/colors.service */ "./src/app/services/colors.service.ts");
+
 
 
 
@@ -458,24 +459,34 @@ class BoardTheme {
     }
 }
 class BoardSettings {
+    constructor() {
+        this.orientation = 'white';
+    }
 }
 ;
 class CanvasChessBoard {
-    constructor(gameService) {
+    constructor(gameService, colorService) {
         this.gameService = gameService;
+        this.colorService = colorService;
         this.UUID = '';
         this.size = 320;
         this.tileSize = Math.floor(this.size / 8);
         this.interactive = true;
+        this.promotionDialog = null;
+        this.knightButton = null;
+        this.bishopButton = null;
+        this.rookButton = null;
+        this.queenButton = null;
         this.theme = new BoardTheme();
         this.settings = new BoardSettings();
         this.pieceMap = new Map();
         this.pieces = [];
+        this.tileGroup = null;
         this.tiles = [];
         this.canvas = null;
-        this.orientation = 'white';
         this.selectedPiece = null;
         this.touching = false;
+        this.midPromotion = false;
         this.gameService.attachBoard(this);
         if (this.gameService.game.value !== null) {
             this.setBoardToGamePosition();
@@ -507,7 +518,7 @@ class CanvasChessBoard {
             const pieceImage = this.pieceMap.get(color + role);
             if (pieceImage) {
                 pieceImage.clone((pieceObject) => {
-                    var _a, _b;
+                    var _a;
                     pieceObject.set('lockRotation', true);
                     pieceObject.set('lockScalingX', true);
                     pieceObject.set('lockScalingY', true);
@@ -522,7 +533,7 @@ class CanvasChessBoard {
                         pieceObject.hoverCursor = 'grab';
                         pieceObject.moveCursor = 'grabbing';
                     }
-                    if (this.orientation == 'white') {
+                    if (this.settings.orientation == 'white') {
                         pieceObject.set('left', Math.floor(col * this.tileSize) + padding);
                         pieceObject.set('top', Math.floor((7 - row) * this.tileSize) + padding);
                     }
@@ -533,12 +544,436 @@ class CanvasChessBoard {
                     pieceObject.scaleToHeight(this.tileSize);
                     pieceObject.setCoords();
                     this.pieces[tile] = { tile: tile, object: pieceObject };
+                    this.tiles[tile].piece = { role, color };
                     if (this.canvas) {
                         (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.add(pieceObject);
-                        (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.bringToFront(pieceObject);
+                        pieceObject.moveTo(10);
                     }
                 });
             }
+        }
+    }
+    removePiece(tile) {
+        var _a;
+        const object = this.pieces[tile].object;
+        delete this.pieces[tile];
+        (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.remove(object);
+        delete this.tiles[tile].piece;
+    }
+    performPromotion(move) {
+        if (move.promotion) {
+            console.log('Promoting to ' + move.promotion.role);
+            console.log('@ ' + SquareNames[move.to]);
+            // remove old piece
+            this.removePiece(move.to);
+            this.addPiece(move.to, move.color, move.promotion.role);
+            if (this.gameService.game.value) {
+                this.gameService.game.value.performPromotion(move);
+                this.closePromotionDialog();
+            }
+        }
+    }
+    closePromotionDialog() {
+        var _a, _b, _c, _d, _e;
+        if (this.knightButton) {
+            (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.remove(this.knightButton);
+        }
+        if (this.bishopButton) {
+            (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.remove(this.bishopButton);
+        }
+        if (this.rookButton) {
+            (_c = this.canvas) === null || _c === void 0 ? void 0 : _c.remove(this.rookButton);
+        }
+        if (this.queenButton) {
+            (_d = this.canvas) === null || _d === void 0 ? void 0 : _d.remove(this.queenButton);
+        }
+        if (this.promotionDialog) {
+            (_e = this.canvas) === null || _e === void 0 ? void 0 : _e.remove(this.promotionDialog);
+        }
+        this.knightButton = null;
+        this.bishopButton = null;
+        this.rookButton = null;
+        this.queenButton = null;
+        this.promotionDialog = null;
+    }
+    createPromotionDialog(move) {
+        var _a, _b, _c, _d, _e, _f;
+        // pull items out of chess move
+        const tileIndex = move.to;
+        if (move.role && move.color && tileIndex >= 0 && tileIndex < 64) {
+            const group = [];
+            if (this.settings.orientation == 'white') {
+                // translate tileIndex
+            }
+            // Create the background overlay (semi-transparent square)
+            const overlay = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({ width: this.size, height: this.size, left: 0, top: 0 });
+            overlay.set('lockMovementX', true);
+            overlay.set('lockMovementY', true);
+            overlay.set('lockRotation', true);
+            overlay.set('lockScalingX', true);
+            overlay.set('lockScalingY', true);
+            overlay.set('lockUniScaling', true);
+            overlay.set('hasControls', false);
+            overlay.set('hasBorders', false);
+            overlay.set('selectable', false);
+            overlay.set('opacity', .65);
+            overlay.setCoords();
+            overlay.setColor('#0a0a0a');
+            group.push(overlay);
+            // Create the background square (rounded rectangle 80% width 64% height vertically and horizontally centered)
+            const height = .60 * this.size;
+            const width = .8 * this.size;
+            const bg = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({
+                height: height, width: width, fill: this.colorService.bgMenu, left: (this.size - width) / 2, top: (this.size - height) / 2,
+                rx: width * .02, ry: width * .02
+            });
+            bg.setColor(this.colorService.bgMenu);
+            bg.set('lockMovementX', true);
+            bg.set('lockMovementY', true);
+            bg.set('lockRotation', true);
+            bg.set('lockScalingX', true);
+            bg.set('lockScalingY', true);
+            bg.set('lockUniScaling', true);
+            bg.set('hasControls', false);
+            bg.set('hasBorders', false);
+            bg.set('selectable', false);
+            bg.set('strokeWidth', 1);
+            bg.set('stroke', 'white');
+            bg.setCoords();
+            group.push(bg);
+            let pieceImage = null;
+            // Create the title text "Promotion" - white, subtle
+            const title = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text('Promotion', { fontWeight: '100', fontSize: 64, fontFamily: 'Courier New' });
+            title.set('lockMovementX', true);
+            title.set('lockMovementY', true);
+            title.set('lockRotation', true);
+            title.set('lockScalingX', true);
+            title.set('lockScalingY', true);
+            title.set('lockUniScaling', true);
+            title.set('hasControls', false);
+            title.set('hasBorders', false);
+            title.set('selectable', false);
+            title.setColor('white');
+            title.set('originX', 'center');
+            title.set('originY', 'center');
+            title.set('left', this.size * .5);
+            title.set('top', this.size * .235);
+            title.setCoords();
+            group.push(title);
+            // Clone the promoted piece and tile and display them horizontally centered below title
+            let x = this.size / 2;
+            let y = (this.size * .38) + 4;
+            const tileSize = this.size * .2;
+            // Tile Clone
+            const tileToClone = this.tiles[tileIndex];
+            if (tileToClone) {
+                tileToClone.tile.clone(((promotionTile) => {
+                    promotionTile.set('top', y);
+                    promotionTile.set('left', x);
+                    promotionTile.set('originX', 'center');
+                    promotionTile.set('originY', 'center');
+                    promotionTile.scaleToHeight(tileSize);
+                    promotionTile.setCoords();
+                    group.push(promotionTile);
+                }));
+                pieceImage = this.pieceMap.get(move.color + move.role);
+                if (pieceImage) {
+                    pieceImage.clone((pieceObject) => {
+                        pieceObject.set('originX', 'center');
+                        pieceObject.set('originY', 'center');
+                        pieceObject.set('top', y);
+                        pieceObject.set('left', x);
+                        pieceObject.scaleToHeight(tileSize);
+                        pieceObject.setCoords();
+                        group.push(pieceObject);
+                    });
+                }
+            }
+            pieceImage = null;
+            // Create text "{Color} has triggered at " below tile and piece clone
+            // Create the title text "Promotion" - white, subtle
+            let color = 'White';
+            if (move.color === 'b') {
+                color = 'Black';
+            }
+            const prompt = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(color + ' has triggered promotion at', { fontSize: 36 });
+            prompt.set('lockMovementX', true);
+            prompt.set('lockMovementY', true);
+            prompt.set('lockRotation', true);
+            prompt.set('lockScalingX', true);
+            prompt.set('lockScalingY', true);
+            prompt.set('lockUniScaling', true);
+            prompt.set('hasControls', false);
+            prompt.set('hasBorders', false);
+            prompt.set('selectable', false);
+            prompt.setColor('white');
+            prompt.set('originX', 'center');
+            prompt.set('originY', 'center');
+            prompt.set('left', (this.size * .5) - 48);
+            prompt.set('top', this.size * .53);
+            prompt.setCoords();
+            group.push(prompt);
+            // Create text to right of triggered text with move
+            const atText = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(SquareNames[tileIndex], { fontWeight: 'bold', fontSize: 44 });
+            atText.set('lockMovementX', true);
+            atText.set('lockMovementY', true);
+            atText.set('lockRotation', true);
+            atText.set('lockScalingX', true);
+            atText.set('lockScalingY', true);
+            atText.set('lockUniScaling', true);
+            atText.set('hasControls', false);
+            atText.set('hasBorders', false);
+            atText.set('selectable', false);
+            const bgColor = tileToClone.tile.get('fill');
+            atText.setColor(bgColor ? bgColor.toString() : 'white');
+            atText.set('originX', 'center');
+            atText.set('originY', 'center');
+            const promptWidth = prompt.get('width');
+            const promptLeft = prompt.get('left');
+            atText.set('left', (promptLeft ? promptLeft : this.size * .2) + ((promptWidth !== undefined ? promptWidth : 20) / 2) + 38);
+            atText.set('top', this.size * .53);
+            atText.setCoords();
+            group.push(atText);
+            // Create 4 clones of tiles, 4 clones of pieces (Knight, Bishop, Rook, And King)
+            // Create the four tiles
+            y = (this.size * .67) + 4;
+            x = (this.size * .205);
+            const choiceSize = tileSize * .75;
+            if (tileToClone) {
+                let buttonGroup = [];
+                tileToClone.tile.clone(((tile) => {
+                    tile.set('originX', 'left');
+                    tile.set('originY', 'top');
+                    tile.set('stroke', this.colorService.gsTextColorHG.value);
+                    tile.set('strokeWidth', 2);
+                    tile.set('top', 0);
+                    tile.set('left', 0);
+                    tile.scaleToHeight(choiceSize);
+                    tile.setCoords();
+                    buttonGroup.push(tile);
+                }));
+                // Knight button
+                pieceImage = this.pieceMap.get(move.color + 'N');
+                if (pieceImage) {
+                    pieceImage.clone((obj) => {
+                        obj.set('originX', 'left');
+                        obj.set('originY', 'top');
+                        obj.set('top', 0);
+                        obj.set('left', 0);
+                        obj.scaleToHeight(choiceSize);
+                        obj.setCoords();
+                        buttonGroup.push(obj);
+                    });
+                }
+                if (buttonGroup.length >= 2) {
+                    this.knightButton = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(buttonGroup);
+                    this.knightButton.set('originX', 'center');
+                    this.knightButton.set('originY', 'center');
+                    this.knightButton.set('top', y);
+                    this.knightButton.set('left', x);
+                    this.knightButton.set('selectable', true);
+                    this.knightButton.set('lockMovementX', true);
+                    this.knightButton.set('lockMovementY', true);
+                    this.knightButton.set('lockRotation', true);
+                    this.knightButton.set('lockScalingX', true);
+                    this.knightButton.set('lockScalingY', true);
+                    this.knightButton.set('lockUniScaling', true);
+                    this.knightButton.set('hasControls', false);
+                    this.knightButton.set('hasBorders', false);
+                    this.knightButton.scaleToHeight(choiceSize);
+                    this.knightButton.setCoords();
+                    this.knightButton.on('selected', () => {
+                        move.promotion = { role: 'N' };
+                        this.performPromotion(move);
+                    });
+                }
+                let buttonGroup2 = [];
+                // Bishop Button
+                x = (this.size * .4);
+                tileToClone.tile.clone(((tile) => {
+                    tile.set('originX', 'left');
+                    tile.set('originY', 'top');
+                    tile.set('stroke', this.colorService.gsTextColorHG.value);
+                    tile.set('strokeWidth', 2);
+                    tile.set('top', 0);
+                    tile.set('left', 0);
+                    tile.scaleToHeight(choiceSize);
+                    tile.setCoords();
+                    buttonGroup2.push(tile);
+                }));
+                pieceImage = this.pieceMap.get(move.color + 'B');
+                if (pieceImage) {
+                    pieceImage.clone((piece) => {
+                        piece.set('originX', 'left');
+                        piece.set('originY', 'top');
+                        piece.set('top', 0);
+                        piece.set('left', 0);
+                        piece.scaleToHeight(choiceSize);
+                        piece.setCoords();
+                        buttonGroup2.push(piece);
+                    });
+                }
+                if (buttonGroup2.length >= 2) {
+                    this.bishopButton = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(buttonGroup2);
+                    this.bishopButton.set('originX', 'center');
+                    this.bishopButton.set('originY', 'center');
+                    this.bishopButton.set('top', y);
+                    this.bishopButton.set('left', x);
+                    this.bishopButton.set('selectable', true);
+                    this.bishopButton.set('lockMovementX', true);
+                    this.bishopButton.set('lockMovementY', true);
+                    this.bishopButton.set('lockRotation', true);
+                    this.bishopButton.set('lockScalingX', true);
+                    this.bishopButton.set('lockScalingY', true);
+                    this.bishopButton.set('lockUniScaling', true);
+                    this.bishopButton.set('hasControls', false);
+                    this.bishopButton.set('hasBorders', false);
+                    this.bishopButton.scaleToHeight(choiceSize);
+                    this.bishopButton.setCoords();
+                    this.bishopButton.on('selected', () => {
+                        move.promotion = { role: 'B' };
+                        this.performPromotion(move);
+                    });
+                }
+                // Rook Button
+                x = (this.size * .595);
+                let buttonGroup3 = [];
+                tileToClone.tile.clone(((tile) => {
+                    tile.set('originX', 'left');
+                    tile.set('originY', 'top');
+                    tile.set('stroke', this.colorService.gsTextColorHG.value);
+                    tile.set('strokeWidth', 2);
+                    tile.set('top', 0);
+                    tile.set('left', 0);
+                    tile.scaleToHeight(choiceSize);
+                    tile.setCoords();
+                    buttonGroup3.push(tile);
+                }));
+                pieceImage = this.pieceMap.get(move.color + 'R');
+                if (pieceImage) {
+                    pieceImage.clone((piece) => {
+                        piece.set('originX', 'left');
+                        piece.set('originY', 'top');
+                        piece.set('top', 0);
+                        piece.set('left', 0);
+                        piece.scaleToHeight(choiceSize);
+                        piece.setCoords();
+                        buttonGroup3.push(piece);
+                    });
+                }
+                if (buttonGroup3.length >= 2) {
+                    this.rookButton = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(buttonGroup3);
+                    this.rookButton.set('originX', 'center');
+                    this.rookButton.set('originY', 'center');
+                    this.rookButton.set('top', y);
+                    this.rookButton.set('left', x);
+                    this.rookButton.set('selectable', true);
+                    this.rookButton.set('lockMovementX', true);
+                    this.rookButton.set('lockMovementY', true);
+                    this.rookButton.set('lockRotation', true);
+                    this.rookButton.set('lockScalingX', true);
+                    this.rookButton.set('lockScalingY', true);
+                    this.rookButton.set('lockUniScaling', true);
+                    this.rookButton.set('hasControls', false);
+                    this.rookButton.set('hasBorders', false);
+                    this.rookButton.scaleToHeight(choiceSize);
+                    this.rookButton.setCoords();
+                    this.rookButton.on('selected', () => {
+                        move.promotion = { role: 'R' };
+                        this.performPromotion(move);
+                    });
+                }
+                // Queen
+                x = (this.size * .79);
+                let buttonGroup4 = [];
+                tileToClone.tile.clone(((tile) => {
+                    tile.set('originX', 'left');
+                    tile.set('originY', 'top');
+                    tile.set('stroke', this.colorService.gsTextColorHG.value);
+                    tile.set('strokeWidth', 2);
+                    tile.set('top', 0);
+                    tile.set('left', 0);
+                    tile.scaleToHeight(choiceSize);
+                    tile.setCoords();
+                    buttonGroup4.push(tile);
+                }));
+                pieceImage = this.pieceMap.get(move.color + 'Q');
+                if (pieceImage) {
+                    pieceImage.clone((piece) => {
+                        piece.set('originX', 'left');
+                        piece.set('originY', 'top');
+                        piece.set('top', 0);
+                        piece.set('left', 0);
+                        piece.scaleToHeight(choiceSize);
+                        piece.setCoords();
+                        buttonGroup4.push(piece);
+                    });
+                }
+                if (buttonGroup4.length >= 2) {
+                    this.queenButton = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(buttonGroup4);
+                    this.queenButton.set('originX', 'center');
+                    this.queenButton.set('originY', 'center');
+                    this.queenButton.set('top', y);
+                    this.queenButton.set('left', x);
+                    this.queenButton.set('selectable', true);
+                    this.queenButton.set('lockMovementX', true);
+                    this.queenButton.set('lockMovementY', true);
+                    this.queenButton.set('lockRotation', true);
+                    this.queenButton.set('lockScalingX', true);
+                    this.queenButton.set('lockScalingY', true);
+                    this.queenButton.set('lockUniScaling', true);
+                    this.queenButton.set('hasControls', false);
+                    this.queenButton.set('hasBorders', false);
+                    this.queenButton.scaleToHeight(choiceSize);
+                    this.queenButton.setCoords();
+                    this.queenButton.on('selected', () => {
+                        move.promotion = { role: 'Q' };
+                        this.performPromotion(move);
+                    });
+                }
+            }
+            this.promotionDialog = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(group, { left: 0, top: 0, width: this.size, height: this.size });
+            this.promotionDialog.set('lockMovementX', true);
+            this.promotionDialog.set('lockMovementY', true);
+            this.promotionDialog.set('lockRotation', true);
+            this.promotionDialog.set('lockScalingX', true);
+            this.promotionDialog.set('lockScalingY', true);
+            this.promotionDialog.set('lockUniScaling', true);
+            this.promotionDialog.set('hasControls', false);
+            this.promotionDialog.set('hasBorders', false);
+            this.promotionDialog.set('selectable', false);
+            (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.add(this.promotionDialog);
+            this.promotionDialog.moveTo(500);
+            if (this.knightButton) {
+                (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.add(this.knightButton);
+                this.knightButton.moveTo(510);
+            }
+            if (this.bishopButton) {
+                (_c = this.canvas) === null || _c === void 0 ? void 0 : _c.add(this.bishopButton);
+                this.bishopButton.moveTo(510);
+            }
+            if (this.rookButton) {
+                (_d = this.canvas) === null || _d === void 0 ? void 0 : _d.add(this.rookButton);
+                this.rookButton.moveTo(510);
+            }
+            if (this.queenButton) {
+                (_e = this.canvas) === null || _e === void 0 ? void 0 : _e.add(this.queenButton);
+                this.queenButton.moveTo(510);
+            }
+            (_f = this.canvas) === null || _f === void 0 ? void 0 : _f.requestRenderAll();
+        }
+    }
+    showPromotionDialog(move) {
+        if (!this.promotionDialog) {
+            const object = this.pieces[move.from].object;
+            if (object) {
+                object.set('lockMovementX', true);
+                object.set('lockMovementY', true);
+                object.set('selectable', false);
+            }
+            this.createPromotionDialog(move);
+            this.midPromotion = true;
+            return;
         }
     }
     makeMove(move) {
@@ -546,10 +981,11 @@ class CanvasChessBoard {
         if (this.pieces[move.from]) {
             const piece = this.pieces[move.from];
             delete this.pieces[move.from];
+            delete this.tiles[move.from].piece;
             if (piece.object) {
                 const row = Math.floor(move.to / 8);
                 const col = move.to % 8;
-                if (this.orientation == 'white') {
+                if (this.settings.orientation == 'white') {
                     piece.object.set('left', col * this.tileSize);
                     piece.object.set('top', (7 - row) * this.tileSize);
                 }
@@ -564,17 +1000,53 @@ class CanvasChessBoard {
                 }
                 piece.tile = to;
                 this.pieces[to] = piece;
+                this.tiles[to].piece = { color: move.color, role: move.role };
+                // piece.object.moveTo(10);
+                // this.promotionDialog?.moveTo(500);
                 piece.object.setCoords();
-                (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.requestRenderAll();
             }
         }
+        (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.requestRenderAll();
+    }
+    unMakeMove(move) {
+        var _a, _b;
+        if (this.pieces[move.to]) {
+            const piece = this.pieces[move.to];
+            delete this.pieces[move.to];
+            delete this.tiles[move.to].piece;
+            if (piece.object) {
+                const row = Math.floor(move.from / 8);
+                const col = move.from % 8;
+                if (this.settings.orientation == 'white') {
+                    piece.object.set('left', col * this.tileSize);
+                    piece.object.set('top', (7 - row) * this.tileSize);
+                }
+                else {
+                    piece.object.set('left', (7 - col) * this.tileSize);
+                    piece.object.set('top', row * this.tileSize);
+                }
+                const from = (row * 8) + col;
+                const capture = move.capture;
+                if (capture) {
+                    this.addPiece(move.to, capture.color, capture.role);
+                }
+                piece.tile = from;
+                this.pieces[from] = piece;
+                this.tiles[from].piece = { color: move.color, role: move.role };
+                piece.object.moveTo(10);
+                piece.object.setCoords();
+                (_a = this.promotionDialog) === null || _a === void 0 ? void 0 : _a.moveTo(500);
+            }
+        }
+        (_b = this.canvas) === null || _b === void 0 ? void 0 : _b.requestRenderAll();
     }
     resetMove(move) {
+        var _a;
         const piece = this.pieces[move.from].object;
         if (piece) {
             const row = Math.floor(move.from / 8);
             const col = move.from % 8;
-            if (this.orientation == 'white') {
+            if (this.settings.orientation == 'white') {
                 piece.set('left', col * this.tileSize);
                 piece.set('top', (7 - row) * this.tileSize);
             }
@@ -582,6 +1054,8 @@ class CanvasChessBoard {
                 piece.set('left', (7 - col) * this.tileSize);
                 piece.set('top', row * this.tileSize);
             }
+            piece.moveTo(10);
+            (_a = this.promotionDialog) === null || _a === void 0 ? void 0 : _a.moveTo(500);
             piece.setCoords();
         }
     }
@@ -620,7 +1094,7 @@ class CanvasChessBoard {
             }
             let row = Math.ceil(y / this.tileSize) - 1;
             let col = Math.ceil(x / this.tileSize) - 1;
-            if (this.orientation == 'white') {
+            if (this.settings.orientation == 'white') {
                 row = Math.ceil((this.size - y) / this.tileSize) - 1;
             }
             else {
@@ -630,6 +1104,11 @@ class CanvasChessBoard {
             const move = new _services_game_service__WEBPACK_IMPORTED_MODULE_3__["ChessMove"]();
             move.from = this.selectedPiece.tile;
             move.to = tile;
+            const piece = this.tiles[move.from].piece;
+            if (piece) {
+                move.color = piece.color;
+                move.role = piece.role;
+            }
             if (x < 0 || x > this.size || y > this.size || y < 0) {
                 this.resetMove(move);
             }
@@ -650,7 +1129,7 @@ class CanvasChessBoard {
             const point = event.touches[0];
             let row = Math.ceil(point.clientY / this.tileSize) - 1;
             let col = Math.ceil(point.clientX / this.tileSize) - 1;
-            if (this.orientation == 'white') {
+            if (this.settings.orientation == 'white') {
                 row = Math.ceil((this.size - point.clientY) / this.tileSize) - 1;
             }
             else {
@@ -665,6 +1144,7 @@ class CanvasChessBoard {
         }
     }
     selectPiece(e) {
+        var _a;
         let x = 0;
         let y = 0;
         const event = e.e;
@@ -679,7 +1159,7 @@ class CanvasChessBoard {
         }
         let row = Math.ceil(y / this.tileSize) - 1;
         let col = Math.ceil(x / this.tileSize) - 1;
-        if (this.orientation == 'white') {
+        if (this.settings.orientation == 'white') {
             row = Math.ceil((this.size - y) / this.tileSize) - 1;
         }
         else {
@@ -689,6 +1169,10 @@ class CanvasChessBoard {
         if (tileIndex >= 0 && tileIndex < 64) {
             this.selectedPiece = this.pieces[tileIndex];
             //this.highlightTile(tileIndex);
+        }
+        else {
+            (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.discardActiveObject();
+            this.selectedPiece = null;
         }
     }
     clearBoard() {
@@ -717,14 +1201,14 @@ class CanvasChessBoard {
         }
     }
     generateTiles() {
-        var _a;
         if (this.canvas) {
             if (!this.theme) {
                 console.log('Cannot generate board without theme');
                 return;
             }
+            const tiles = [];
             const padding = Math.floor((this.size - this.tileSize * 8) / 2);
-            for (let row = 0; row < 8; row++) {
+            for (let row = 7; row >= 0; row--) {
                 for (let col = 0; col < 8; col++) {
                     // move this to clone feature, only create the tiles once.
                     const tile = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({
@@ -732,7 +1216,7 @@ class CanvasChessBoard {
                         height: this.tileSize
                     });
                     // create piece
-                    if (this.orientation == 'white') {
+                    if (this.settings.orientation == 'white') {
                         tile.set('left', col * this.tileSize + padding);
                         tile.set('top', row * this.tileSize + padding);
                     }
@@ -753,32 +1237,52 @@ class CanvasChessBoard {
                     if (row % 2 === 0) {
                         // even row 0, 2, 4, 6
                         if (col % 2 === 0) {
-                            tile.setColor(this.theme.tileDark);
+                            tile.setColor(this.theme.tileLight);
                         }
                         else {
-                            tile.setColor(this.theme.tileLight);
+                            tile.setColor(this.theme.tileDark);
                         }
                     }
                     else {
                         // odd row 1, 3, 5, 7
                         if (col % 2 === 0) {
-                            tile.setColor(this.theme.tileLight);
+                            tile.setColor(this.theme.tileDark);
                         }
                         else {
-                            tile.setColor(this.theme.tileDark);
+                            tile.setColor(this.theme.tileLight);
                         }
                     }
                     this.tiles.push({ tile: tile });
+                    tiles.push(tile);
                 }
             }
-            this.tiles.forEach(this.addTile.bind(this));
+            const tileGroup = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(tiles, {
+                left: 0, top: 0
+            });
+            tileGroup.set('left', 0);
+            tileGroup.set('top', 0);
+            tileGroup.set('lockMovementX', true);
+            tileGroup.set('lockMovementY', true);
+            tileGroup.set('lockRotation', true);
+            tileGroup.set('lockScalingX', true);
+            tileGroup.set('lockScalingY', true);
+            tileGroup.set('hasControls', false);
+            tileGroup.set('hasBorders', false);
+            tileGroup.set('lock');
+            tileGroup.set('selectable', false);
+            tileGroup.set('originX', 'left');
+            tileGroup.set('originY', 'top');
+            this.canvas.add(tileGroup);
+            this.tileGroup = tileGroup;
+            tileGroup.moveTo(-30);
+            this.canvas.requestRenderAll();
         }
-        (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.requestRenderAll();
     }
     addTile(tileData) {
         if (this.canvas) {
             this.canvas.add(tileData.tile);
-            this.canvas.bringToFront(tileData.tile);
+            tileData.tile.moveTo(-100);
+            tileData.tile.setCoords();
         }
     }
     loadPieces() {
@@ -812,6 +1316,7 @@ class CanvasChessBoard {
                         const obj = fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].util.groupSVGElements(objects, options);
                         obj.left = -400;
                         obj.top = 0;
+                        obj.moveTo(10);
                         this.pieceMap.set(piece, obj);
                         subject.next(subject.value + 1);
                     });
@@ -820,20 +1325,31 @@ class CanvasChessBoard {
         }
     }
     resizeBoardObjects(size) {
-        const padding = Math.floor((this.size - this.tileSize * 8) / 2);
-        if (this.tiles.length > 0) {
-            for (let index = 0; index < 64; index++) {
-                const tile = this.tiles[index].tile;
-                const row = Math.floor(index / 8);
-                const col = index % 8;
-                tile.set('width', this.tileSize);
-                tile.set('height', this.tileSize);
-                tile.set('top', row * this.tileSize + padding);
-                tile.set('left', col * this.tileSize + padding);
-                tile.setCoords();
-            }
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
+        const padding = Math.floor((this.size - (this.tileSize * 8)) / 2);
+        if (this.tileGroup) {
+            const border = padding / 2;
+            this.tileGroup.set('top', border);
+            this.tileGroup.set('left', border);
+            this.tileGroup.scaleToHeight((this.tileSize * 8) + border);
+            this.tileGroup.scaleToWidth((this.tileSize * 8) + border);
+            this.tileGroup.moveTo(-300);
+            this.tileGroup.setCoords();
         }
-        const difference = Math.floor(size - this.size) / 2;
+        // if (this.tiles.length > 0) {
+        //   for (let index = 0; index < 64; index++) {
+        //     const tile = this.tiles[index].tile;
+        //     const row = Math.floor(index / 8);
+        //     const col = index % 8;
+        //     tile.set('originX', 'left');
+        //     tile.set('originY', 'top');
+        //     tile.set('width', this.tileSize);
+        //     tile.set('height', this.tileSize);
+        //     tile.set('top', row * this.tileSize);
+        //     tile.set('left', col * this.tileSize);
+        //     tile.setCoords();
+        //   }
+        // }
         this.pieces.forEach((pieceData) => {
             const piece = pieceData.object;
             if (piece.left !== undefined &&
@@ -842,7 +1358,7 @@ class CanvasChessBoard {
                 const row = Math.floor(pieceData.tile / 8);
                 const col = pieceData.tile % 8;
                 piece.scaleToHeight(this.tileSize);
-                if (this.orientation == 'white') {
+                if (this.settings.orientation == 'white') {
                     piece.set('left', Math.floor(col * this.tileSize) + padding);
                     piece.set('top', Math.floor((7 - row) * this.tileSize) + padding);
                 }
@@ -850,9 +1366,48 @@ class CanvasChessBoard {
                     piece.set('left', Math.floor((7 - col) * this.tileSize) + padding);
                     piece.set('top', Math.floor(row * this.tileSize) + padding);
                 }
+                piece.moveTo(10);
                 piece.setCoords();
             }
         });
+        if (this.promotionDialog) {
+            this.promotionDialog.scaleToHeight(this.size);
+            this.promotionDialog.scaleToWidth(this.size);
+            (_a = this.promotionDialog) === null || _a === void 0 ? void 0 : _a.moveTo(500);
+            // knight
+            let y = (this.size * .67) + 4;
+            let x = (this.size * .205);
+            (_b = this.knightButton) === null || _b === void 0 ? void 0 : _b.scaleToHeight(this.size * .15);
+            (_c = this.knightButton) === null || _c === void 0 ? void 0 : _c.scaleToWidth(this.size * .15);
+            (_d = this.knightButton) === null || _d === void 0 ? void 0 : _d.set('left', x);
+            (_e = this.knightButton) === null || _e === void 0 ? void 0 : _e.set('top', y);
+            (_f = this.knightButton) === null || _f === void 0 ? void 0 : _f.moveTo(510);
+            (_g = this.knightButton) === null || _g === void 0 ? void 0 : _g.setCoords();
+            // bishop
+            x = (this.size * .4);
+            (_h = this.bishopButton) === null || _h === void 0 ? void 0 : _h.scaleToHeight(this.size * .15);
+            (_j = this.bishopButton) === null || _j === void 0 ? void 0 : _j.scaleToWidth(this.size * .15);
+            (_k = this.bishopButton) === null || _k === void 0 ? void 0 : _k.set('left', x);
+            (_l = this.bishopButton) === null || _l === void 0 ? void 0 : _l.set('top', y);
+            (_m = this.bishopButton) === null || _m === void 0 ? void 0 : _m.moveTo(510);
+            (_o = this.bishopButton) === null || _o === void 0 ? void 0 : _o.setCoords();
+            // rook
+            x = (this.size * .595);
+            (_p = this.rookButton) === null || _p === void 0 ? void 0 : _p.scaleToHeight(this.size * .15);
+            (_q = this.rookButton) === null || _q === void 0 ? void 0 : _q.scaleToWidth(this.size * .15);
+            (_r = this.rookButton) === null || _r === void 0 ? void 0 : _r.set('left', x);
+            (_s = this.rookButton) === null || _s === void 0 ? void 0 : _s.set('top', y);
+            (_t = this.rookButton) === null || _t === void 0 ? void 0 : _t.moveTo(510);
+            (_u = this.rookButton) === null || _u === void 0 ? void 0 : _u.setCoords();
+            // queen
+            x = (this.size * .79);
+            (_v = this.queenButton) === null || _v === void 0 ? void 0 : _v.scaleToHeight(this.size * .15);
+            (_w = this.queenButton) === null || _w === void 0 ? void 0 : _w.scaleToWidth(this.size * .15);
+            (_x = this.queenButton) === null || _x === void 0 ? void 0 : _x.set('left', x);
+            (_y = this.queenButton) === null || _y === void 0 ? void 0 : _y.set('top', y);
+            (_z = this.queenButton) === null || _z === void 0 ? void 0 : _z.moveTo(510);
+            (_0 = this.queenButton) === null || _0 === void 0 ? void 0 : _0.setCoords();
+        }
     }
     setDarkTile(color) {
         var _a;
@@ -948,8 +1503,8 @@ class CanvasChessBoard {
         this.generateBoard();
     }
 }
-CanvasChessBoard.ɵfac = function CanvasChessBoard_Factory(t) { return new (t || CanvasChessBoard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"])); };
-CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tiles: "tiles", canvas: "canvas", orientation: "orientation", selectedPiece: "selectedPiece", touching: "touching" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
+CanvasChessBoard.ɵfac = function CanvasChessBoard_Factory(t) { return new (t || CanvasChessBoard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_colors_service__WEBPACK_IMPORTED_MODULE_4__["ColorService"])); };
+CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CanvasChessBoard, selectors: [["canvas-chessboard"]], inputs: { UUID: "UUID", size: "size", interactive: "interactive", theme: "theme", settings: "settings", selectedPiece: "selectedPiece" }, outputs: { tileSize: "tileSize", theme: "theme", settings: "settings", pieceMap: "pieceMap", pieces: "pieces", tileGroup: "tileGroup", tiles: "tiles", canvas: "canvas", selectedPiece: "selectedPiece", touching: "touching", midPromotion: "midPromotion" }, decls: 1, vars: 13, consts: [["resize", "", 2, "position", "absolute", 3, "id", "height", "width"]], template: function CanvasChessBoard_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "canvas", 0);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("top", 0)("left", 0)("width", ctx.size, "px")("height", ctx.size, "px")("z-index", 2);
@@ -963,7 +1518,7 @@ CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
                 templateUrl: './canvas-chessboard.component.html',
                 styleUrls: ['./canvas-chessboard.component.scss'],
             }]
-    }], function () { return [{ type: _services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"] }]; }, { UUID: [{
+    }], function () { return [{ type: _services_game_service__WEBPACK_IMPORTED_MODULE_3__["GameService"] }, { type: _services_colors_service__WEBPACK_IMPORTED_MODULE_4__["ColorService"] }]; }, { UUID: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }], size: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -983,17 +1538,19 @@ CanvasChessBoard.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }], pieces: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
+        }], tileGroup: [{
+            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }], tiles: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }], canvas: [{
-            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
-        }], orientation: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }], selectedPiece: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }, {
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }], touching: [{
+            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
+        }], midPromotion: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
         }] }); })();
 
@@ -2182,7 +2739,26 @@ class ChessGame {
     onVariant() {
         return this.isVariation;
     }
+    performPromotion(move) {
+        if (move.promotion && move.promoteFunction) {
+            //const moveDesc = 1
+            const moveDesc = move.promoteFunction(move.promotion.role.toLowerCase());
+            console.log(this.position.notation(moveDesc));
+            if (this.position.play(moveDesc)) {
+                const node = this.variation.play(moveDesc);
+                if (!this.lastNode || this.lastNode == this.currentNode) {
+                    this.lastNode = node;
+                }
+                if (!this.startNode) {
+                    this.startNode = node;
+                }
+                this.currentNode = node;
+                this.currentNode._info.moveDescriptor = moveDesc;
+            }
+        }
+    }
     makeMove(move, fromPGN = false) {
+        var _a;
         if (this.currentNode) {
             const pgnMove = this.currentNode._info.moveDescriptor;
             const toSquare = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"][move.to];
@@ -2231,17 +2807,23 @@ class ChessGame {
                         else {
                             console.log('Variant Continued: ' + fromSquare + ' -> ' + toSquare);
                         }
-                        const legalMove = legal();
-                        if (this.position.play(legalMove)) {
-                            const node = this.variation.play(legalMove);
-                            if (!this.lastNode || this.lastNode == this.currentNode) {
-                                this.lastNode = node;
+                        if (legal.status === 'promotion') {
+                            move.promoteFunction = legal;
+                            (_a = this.gameService.board.value) === null || _a === void 0 ? void 0 : _a.showPromotionDialog(move);
+                        }
+                        else {
+                            const legalMove = legal();
+                            if (this.position.play(legalMove)) {
+                                const node = this.variation.play(legalMove);
+                                if (!this.lastNode || this.lastNode == this.currentNode) {
+                                    this.lastNode = node;
+                                }
+                                if (!this.startNode) {
+                                    this.startNode = node;
+                                }
+                                this.currentNode = node;
+                                this.currentNode._info.moveDescriptor = legalMove;
                             }
-                            if (!this.startNode) {
-                                this.startNode = node;
-                            }
-                            this.currentNode = node;
-                            this.currentNode._info.moveDescriptor = legalMove;
                         }
                     }
                 }
@@ -2332,15 +2914,7 @@ class ChessGame {
         return false;
     }
     moveToStart() {
-        if (!this.isStartingPosition()) {
-            this.position.reset();
-            if (this.gameService.board.value) {
-                this.variation = this.game.mainVariation();
-                this.currentNode = this.variation.first();
-                this.startNode = this.currentNode;
-                this.lastNode = this.position.__last;
-                this.gameService.board.value.setBoardToGamePosition();
-            }
+        while (this.previous()) {
         }
     }
     moveToEnd() {
@@ -2349,25 +2923,34 @@ class ChessGame {
         }
     }
     previous() {
-        var _a;
         if (!this.isStartingPosition() && this.gameService.board.value) {
             if (!ChessGame.compareKNode(this.startNode, this.currentNode)) {
                 let currentNode = this.startNode;
                 while (currentNode.next() && !ChessGame.compareKNode(currentNode.next(), this.currentNode)) {
                     currentNode = currentNode.next();
                 }
-                if (ChessGame.compareKNode(currentNode, this.startNode)) {
-                    this.moveToStart();
+                if (this.gameService.board.value) {
+                    const move = currentNode._info.moveDescriptor;
+                    const unmove = new ChessMove();
+                    unmove.to = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(move.to());
+                    unmove.from = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(move.from());
+                    if (move.isCapture()) {
+                        const piece = move.capturedPiece();
+                        const color = move.color();
+                        if (piece && color) {
+                            unmove.capture = { role: piece.toUpperCase(), color: color === 'w' ? 'b' : 'w' };
+                        }
+                    }
+                    this.gameService.board.value.unMakeMove(unmove);
                 }
-                else {
-                    this.position = currentNode.positionBefore();
-                    this.lastNode = this.position._last;
-                    this.fen = this.position.fen();
-                    this.currentNode = currentNode;
-                }
+                this.position = currentNode.positionBefore();
+                this.lastNode = this.position._last;
+                this.fen = this.position.fen();
+                this.currentNode = currentNode;
+                return true;
             }
-            (_a = this.gameService.board.value) === null || _a === void 0 ? void 0 : _a.setBoardToGamePosition();
         }
+        return false;
     }
     isStartingPosition() {
         return ChessGame.compareKNode(this.variation.first(), this.currentNode);
@@ -2449,9 +3032,17 @@ class GameService {
         }
     }
     moveToEnd() {
-        if (this._game && !this._game.isFinalPosition()) {
-            this._game.moveToEnd();
+        const move = new ChessMove();
+        move.to = 61;
+        move.from = 53;
+        move.color = 'w';
+        move.role = 'P';
+        if (this._board) {
+            this._board.showPromotionDialog(move);
         }
+        // if (this._game && !this._game.isFinalPosition()) {
+        //   this._game.moveToEnd();
+        // }
     }
     loadPGN(pgn) {
         // parse potential multiple games
@@ -2806,7 +3397,7 @@ class OlgaService {
     constructor() {
         this.annotations = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
         this.showingPly = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](true);
-        this.showingHalfPly = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](true);
+        this.showingHalfPly = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](false);
         this.variation = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
     }
 }
