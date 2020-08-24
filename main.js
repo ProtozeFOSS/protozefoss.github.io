@@ -3118,6 +3118,7 @@ class LayoutService {
         var _a, _b;
         if (this.olga && this.olga.gameScoreElement && this.olga.controlsElement) {
             let boardSize = 0;
+            const titleSize = 80;
             if (this.resizeElement) {
                 this.resizeElement.style.left = "-2px";
                 this.resizeElement.style.top = "calc(50% - 3em)";
@@ -3133,18 +3134,19 @@ class LayoutService {
                 if (boardSize > height) {
                     boardSize = height - (padding / 2);
                 }
+                const controlsHeight = boardSize / 7;
                 let gsWidth = (width - boardSize) - padding;
                 (_a = this.board) === null || _a === void 0 ? void 0 : _a.setSize(boardSize);
-                let gsHeight = (boardSize - 200) - 80;
+                let gsHeight = (boardSize - 200) - controlsHeight;
                 // game score
-                this.olga.gameScoreElement.style.top = '60px'; // 64 represents the controls ux
+                this.olga.gameScoreElement.style.top = titleSize + 2 + 'px'; // 64 represents the controls ux
                 this.olga.gameScoreElement.style.width = gsWidth + 'px';
                 this.olga.gameScoreElement.style.height = gsHeight + 'px';
                 // controls
                 this.olga.controlsElement.style.left = '';
-                this.olga.controlsElement.style.top = (gsHeight + 51).toString() + 'px'; // 64 represents the 
+                this.olga.controlsElement.style.top = (gsHeight + titleSize - 8).toString() + 'px'; // 64 represents the 
                 this.olga.controlsElement.style.width = gsWidth.toString() + 'px';
-                this.olga.controlsElement.style.height = 128 + 'px';
+                this.olga.controlsElement.style.height = controlsHeight + 'px';
                 this.olga.controlsElement.style.right = '1px';
                 this.scoreSize.next(gsWidth);
             }
@@ -3160,16 +3162,17 @@ class LayoutService {
                     gsSize = window.innerWidth - boardSize + padding;
                 }
                 (_b = this.board) === null || _b === void 0 ? void 0 : _b.setSize(boardSize);
-                let gsHeight = (boardSize - 200) - 80;
+                const controlsHeight = boardSize / 7;
+                let gsHeight = (boardSize - 200) - controlsHeight;
                 // game score
-                this.olga.gameScoreElement.style.top = '60px'; // 64 represents the controls ux
+                this.olga.gameScoreElement.style.top = titleSize + 2 + 'px'; // 64 represents the controls ux
                 this.olga.gameScoreElement.style.width = gsSize + 'px';
                 this.olga.gameScoreElement.style.height = gsHeight + 'px';
                 // controls
                 this.olga.controlsElement.style.left = '';
-                this.olga.controlsElement.style.top = (gsHeight + 51).toString() + 'px'; // 64 represents the 
+                this.olga.controlsElement.style.top = (gsHeight + titleSize - 8).toString() + 'px'; // 64 represents the 
                 this.olga.controlsElement.style.width = gsSize.toString() + 'px';
-                this.olga.controlsElement.style.height = 128 + 'px';
+                this.olga.controlsElement.style.height = controlsHeight + 'px';
                 this.olga.controlsElement.style.right = '1px';
                 this.scoreSize.next(gsSize);
             }
