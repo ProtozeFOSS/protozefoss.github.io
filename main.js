@@ -3359,7 +3359,7 @@ class LayoutService {
                 this.scoreSize.next(gsWidth);
             }
             else {
-                this.preferredRatio = width / gsSize;
+                //this.preferredRatio = width / gsSize;
                 let padding = width * 0.02;
                 if (padding < 18) {
                     padding = 18;
