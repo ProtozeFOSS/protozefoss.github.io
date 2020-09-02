@@ -507,7 +507,72 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const SquareNames = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1', 'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2', 'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3', 'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4', 'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5', 'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6', 'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7', 'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'];
+const SquareNames = [
+    'a1',
+    'b1',
+    'c1',
+    'd1',
+    'e1',
+    'f1',
+    'g1',
+    'h1',
+    'a2',
+    'b2',
+    'c2',
+    'd2',
+    'e2',
+    'f2',
+    'g2',
+    'h2',
+    'a3',
+    'b3',
+    'c3',
+    'd3',
+    'e3',
+    'f3',
+    'g3',
+    'h3',
+    'a4',
+    'b4',
+    'c4',
+    'd4',
+    'e4',
+    'f4',
+    'g4',
+    'h4',
+    'a5',
+    'b5',
+    'c5',
+    'd5',
+    'e5',
+    'f5',
+    'g5',
+    'h5',
+    'a6',
+    'b6',
+    'c6',
+    'd6',
+    'e6',
+    'f6',
+    'g6',
+    'h6',
+    'a7',
+    'b7',
+    'c7',
+    'd7',
+    'e7',
+    'f7',
+    'g7',
+    'h7',
+    'a8',
+    'b8',
+    'c8',
+    'd8',
+    'e8',
+    'f8',
+    'g8',
+    'h8',
+];
 class BoardTheme {
     constructor(tileLight = '', tileDark = '', pieceSet = '', isSpriteSheet = false, fileExtension = '.svg') {
         this.tileLight = tileLight;
@@ -522,7 +587,6 @@ class BoardSettings {
         this.orientation = 'white';
     }
 }
-;
 class CanvasChessBoard {
     constructor(gameService, colorService) {
         this.gameService = gameService;
@@ -665,7 +729,12 @@ class CanvasChessBoard {
                 // translate tileIndex
             }
             // Create the background overlay (semi-transparent square)
-            const overlay = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({ width: this.size, height: this.size, left: 0, top: 0 });
+            const overlay = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({
+                width: this.size,
+                height: this.size,
+                left: 0,
+                top: 0,
+            });
             overlay.set('lockMovementX', true);
             overlay.set('lockMovementY', true);
             overlay.set('lockRotation', true);
@@ -675,16 +744,21 @@ class CanvasChessBoard {
             overlay.set('hasControls', false);
             overlay.set('hasBorders', false);
             overlay.set('selectable', false);
-            overlay.set('opacity', .65);
+            overlay.set('opacity', 0.65);
             overlay.setCoords();
             overlay.setColor('#0a0a0a');
             group.push(overlay);
             // Create the background square (rounded rectangle 80% width 64% height vertically and horizontally centered)
-            const height = .60 * this.size;
-            const width = .8 * this.size;
+            const height = 0.6 * this.size;
+            const width = 0.8 * this.size;
             const bg = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({
-                height: height, width: width, fill: this.colorService.bgMenu, left: (this.size - width) / 2, top: (this.size - height) / 2,
-                rx: width * .02, ry: width * .02
+                height: height,
+                width: width,
+                fill: this.colorService.bgMenu,
+                left: (this.size - width) / 2,
+                top: (this.size - height) / 2,
+                rx: width * 0.02,
+                ry: width * 0.02,
             });
             bg.setColor(this.colorService.bgMenu);
             bg.set('lockMovementX', true);
@@ -702,7 +776,11 @@ class CanvasChessBoard {
             group.push(bg);
             let pieceImage = null;
             // Create the title text "Promotion" - white, subtle
-            const title = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text('Promotion', { fontWeight: '100', fontSize: this.size * .07, fontFamily: 'Courier New' });
+            const title = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text('Promotion', {
+                fontWeight: '100',
+                fontSize: this.size * 0.07,
+                fontFamily: 'Courier New',
+            });
             title.set('lockMovementX', true);
             title.set('lockMovementY', true);
             title.set('lockRotation', true);
@@ -715,18 +793,18 @@ class CanvasChessBoard {
             title.setColor('white');
             title.set('originX', 'center');
             title.set('originY', 'center');
-            title.set('left', this.size * .5);
-            title.set('top', this.size * .235);
+            title.set('left', this.size * 0.5);
+            title.set('top', this.size * 0.235);
             title.setCoords();
             group.push(title);
             // Clone the promoted piece and tile and display them horizontally centered below title
             let x = this.size / 2;
-            let y = (this.size * .38) + 4;
-            const tileSize = this.size * .2;
+            let y = this.size * 0.38 + 4;
+            const tileSize = this.size * 0.2;
             // Tile Clone
             const tileToClone = this.tiles[tileIndex];
             if (tileToClone) {
-                tileToClone.tile.clone(((promotionTile) => {
+                tileToClone.tile.clone((promotionTile) => {
                     promotionTile.set('top', y);
                     promotionTile.set('left', x);
                     promotionTile.set('originX', 'center');
@@ -734,7 +812,7 @@ class CanvasChessBoard {
                     promotionTile.scaleToHeight(tileSize);
                     promotionTile.setCoords();
                     group.push(promotionTile);
-                }));
+                });
                 pieceImage = this.pieceMap.get(move.color + move.role);
                 if (pieceImage) {
                     pieceImage.clone((pieceObject) => {
@@ -755,7 +833,9 @@ class CanvasChessBoard {
             if (move.color === 'b') {
                 color = 'Black';
             }
-            const prompt = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(color + ' has triggered promotion at', { fontSize: this.size * .04 });
+            const prompt = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(color + ' has triggered promotion at', {
+                fontSize: this.size * 0.04,
+            });
             prompt.set('lockMovementX', true);
             prompt.set('lockMovementY', true);
             prompt.set('lockRotation', true);
@@ -768,12 +848,14 @@ class CanvasChessBoard {
             prompt.setColor('white');
             prompt.set('originX', 'center');
             prompt.set('originY', 'center');
-            prompt.set('left', (this.size * .5) - 24);
-            prompt.set('top', this.size * .53);
+            prompt.set('left', this.size * 0.5 - 24);
+            prompt.set('top', this.size * 0.53);
             prompt.setCoords();
             group.push(prompt);
             // Create text to right of triggered text with move
-            const atText = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(SquareNames[tileIndex], { fontSize: this.size * .055 });
+            const atText = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Text(SquareNames[tileIndex], {
+                fontSize: this.size * 0.055,
+            });
             atText.set('lockMovementX', true);
             atText.set('lockMovementY', true);
             atText.set('lockRotation', true);
@@ -789,18 +871,20 @@ class CanvasChessBoard {
             atText.set('originY', 'center');
             const promptWidth = prompt.get('width');
             const promptLeft = prompt.get('left');
-            atText.set('left', (promptLeft ? promptLeft : this.size * .2) + ((promptWidth !== undefined ? promptWidth : 20) / 2) + this.size * .035);
-            atText.set('top', this.size * .53);
+            atText.set('left', (promptLeft ? promptLeft : this.size * 0.2) +
+                (promptWidth !== undefined ? promptWidth : 20) / 2 +
+                this.size * 0.035);
+            atText.set('top', this.size * 0.53);
             atText.setCoords();
             group.push(atText);
             // Create 4 clones of tiles, 4 clones of pieces (Knight, Bishop, Rook, And King)
             // Create the four tiles
-            y = (this.size * .67) + 4;
-            x = (this.size * .205);
-            const choiceSize = tileSize * .75;
+            y = this.size * 0.67 + 4;
+            x = this.size * 0.205;
+            const choiceSize = tileSize * 0.75;
             if (tileToClone) {
                 let buttonGroup = [];
-                tileToClone.tile.clone(((tile) => {
+                tileToClone.tile.clone((tile) => {
                     tile.set('originX', 'left');
                     tile.set('originY', 'top');
                     tile.set('stroke', this.colorService.gsTextColorHG.value);
@@ -810,7 +894,7 @@ class CanvasChessBoard {
                     tile.scaleToHeight(choiceSize);
                     tile.setCoords();
                     buttonGroup.push(tile);
-                }));
+                });
                 // Knight button
                 pieceImage = this.pieceMap.get(move.color + 'N');
                 if (pieceImage) {
@@ -848,8 +932,8 @@ class CanvasChessBoard {
                 }
                 let buttonGroup2 = [];
                 // Bishop Button
-                x = (this.size * .4);
-                tileToClone.tile.clone(((tile) => {
+                x = this.size * 0.4;
+                tileToClone.tile.clone((tile) => {
                     tile.set('originX', 'left');
                     tile.set('originY', 'top');
                     tile.set('stroke', this.colorService.gsTextColorHG.value);
@@ -859,7 +943,7 @@ class CanvasChessBoard {
                     tile.scaleToHeight(choiceSize);
                     tile.setCoords();
                     buttonGroup2.push(tile);
-                }));
+                });
                 pieceImage = this.pieceMap.get(move.color + 'B');
                 if (pieceImage) {
                     pieceImage.clone((piece) => {
@@ -895,9 +979,9 @@ class CanvasChessBoard {
                     });
                 }
                 // Rook Button
-                x = (this.size * .595);
+                x = this.size * 0.595;
                 let buttonGroup3 = [];
-                tileToClone.tile.clone(((tile) => {
+                tileToClone.tile.clone((tile) => {
                     tile.set('originX', 'left');
                     tile.set('originY', 'top');
                     tile.set('stroke', this.colorService.gsTextColorHG.value);
@@ -907,7 +991,7 @@ class CanvasChessBoard {
                     tile.scaleToHeight(choiceSize);
                     tile.setCoords();
                     buttonGroup3.push(tile);
-                }));
+                });
                 pieceImage = this.pieceMap.get(move.color + 'R');
                 if (pieceImage) {
                     pieceImage.clone((piece) => {
@@ -943,9 +1027,9 @@ class CanvasChessBoard {
                     });
                 }
                 // Queen
-                x = (this.size * .79);
+                x = this.size * 0.79;
                 let buttonGroup4 = [];
-                tileToClone.tile.clone(((tile) => {
+                tileToClone.tile.clone((tile) => {
                     tile.set('originX', 'left');
                     tile.set('originY', 'top');
                     tile.set('stroke', this.colorService.gsTextColorHG.value);
@@ -955,7 +1039,7 @@ class CanvasChessBoard {
                     tile.scaleToHeight(choiceSize);
                     tile.setCoords();
                     buttonGroup4.push(tile);
-                }));
+                });
                 pieceImage = this.pieceMap.get(move.color + 'Q');
                 if (pieceImage) {
                     pieceImage.clone((piece) => {
@@ -991,7 +1075,12 @@ class CanvasChessBoard {
                     });
                 }
             }
-            this.promotionDialog = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(group, { left: 0, top: 0, width: this.size, height: this.size });
+            this.promotionDialog = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(group, {
+                left: 0,
+                top: 0,
+                width: this.size,
+                height: this.size,
+            });
             this.promotionDialog.set('lockMovementX', true);
             this.promotionDialog.set('lockMovementY', true);
             this.promotionDialog.set('lockRotation', true);
@@ -1046,7 +1135,7 @@ class CanvasChessBoard {
             if (piece.object) {
                 const row = Math.floor(move.to / 8);
                 const col = move.to % 8;
-                if (this.settings.orientation == 'white') {
+                if (this.settings.orientation === 'white') {
                     piece.object.set('left', col * this.tileSize);
                     piece.object.set('top', (7 - row) * this.tileSize);
                 }
@@ -1054,7 +1143,7 @@ class CanvasChessBoard {
                     piece.object.set('left', (7 - col) * this.tileSize);
                     piece.object.set('top', row * this.tileSize);
                 }
-                const to = (row * 8) + col;
+                const to = row * 8 + col;
                 const capture = this.pieces[to];
                 if (capture) {
                     (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.remove(capture.object);
@@ -1086,7 +1175,7 @@ class CanvasChessBoard {
                     piece.object.set('left', (7 - col) * this.tileSize);
                     piece.object.set('top', row * this.tileSize);
                 }
-                const from = (row * 8) + col;
+                const from = row * 8 + col;
                 const capture = move.capture;
                 if (capture) {
                     this.addPiece(move.to, capture.color, capture.role);
@@ -1125,8 +1214,10 @@ class CanvasChessBoard {
     // removePiece(tile);
     // addPiece(tile, piece);
     // clearPieces();
-    // 
-    checkPieceCanMove(fromData, toData) { return true; }
+    //
+    checkPieceCanMove(fromData, toData) {
+        return true;
+    }
     isValidDrop(from, to) {
         if (this.gameService.game.value !== null) {
             const position = this.gameService.game.value.getPosition();
@@ -1161,7 +1252,7 @@ class CanvasChessBoard {
             else {
                 col = Math.ceil((this.size - x) / this.tileSize) - 1;
             }
-            const tile = ((row * 8) + col);
+            const tile = row * 8 + col;
             const move = new _services_game_service__WEBPACK_IMPORTED_MODULE_3__["ChessMove"]();
             move.from = this.selectedPiece.tile;
             move.to = tile;
@@ -1174,7 +1265,8 @@ class CanvasChessBoard {
                 this.resetMove(move);
             }
             else {
-                if (this.isValidDrop(this.selectedPiece.tile, tile) && this.gameService.game.value !== null) {
+                if (this.isValidDrop(this.selectedPiece.tile, tile) &&
+                    this.gameService.game.value !== null) {
                     this.gameService.game.value.makeMove(move);
                     this.makeMove(move);
                 }
@@ -1196,7 +1288,7 @@ class CanvasChessBoard {
             else {
                 col = Math.ceil((this.size - point.clientX) / this.tileSize) - 1;
             }
-            const tileIndex = ((row * 8) + col);
+            const tileIndex = row * 8 + col;
             if (tileIndex >= 0 && tileIndex < 64) {
                 this.touching = true;
                 this.selectedPiece = this.pieces[tileIndex];
@@ -1226,7 +1318,7 @@ class CanvasChessBoard {
         else {
             col = Math.ceil((this.size - x) / this.tileSize) - 1;
         }
-        const tileIndex = ((row * 8) + col);
+        const tileIndex = row * 8 + col;
         if (tileIndex >= 0 && tileIndex < 64) {
             this.selectedPiece = this.pieces[tileIndex];
             //this.highlightTile(tileIndex);
@@ -1274,7 +1366,7 @@ class CanvasChessBoard {
                     // move this to clone feature, only create the tiles once.
                     const tile = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Rect({
                         width: this.tileSize,
-                        height: this.tileSize
+                        height: this.tileSize,
                     });
                     // create piece
                     if (this.settings.orientation == 'white') {
@@ -1318,7 +1410,8 @@ class CanvasChessBoard {
                 }
             }
             const tileGroup = new fabric__WEBPACK_IMPORTED_MODULE_1__["fabric"].Group(tiles, {
-                left: 0, top: 0
+                left: 0,
+                top: 0,
             });
             tileGroup.set('left', 0);
             tileGroup.set('top', 0);
@@ -1388,13 +1481,13 @@ class CanvasChessBoard {
     resizeBoardObjects(size) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
         this.tileSize = Math.floor(this.size / 8);
-        const padding = Math.floor((this.size - (this.tileSize * 8)) / 2);
+        const padding = Math.floor((this.size - this.tileSize * 8) / 2);
         if (this.tileGroup) {
             const border = padding / 2;
             this.tileGroup.set('top', border);
             this.tileGroup.set('left', border);
-            this.tileGroup.scaleToHeight((this.tileSize * 8) + border);
-            this.tileGroup.scaleToWidth((this.tileSize * 8) + border);
+            this.tileGroup.scaleToHeight(this.tileSize * 8 + border);
+            this.tileGroup.scaleToWidth(this.tileSize * 8 + border);
             this.tileGroup.moveTo(-300);
             this.tileGroup.setCoords();
         }
@@ -1414,9 +1507,7 @@ class CanvasChessBoard {
         // }
         this.pieces.forEach((pieceData) => {
             const piece = pieceData.object;
-            if (piece.left !== undefined &&
-                piece.top !== undefined &&
-                this.canvas) {
+            if (piece.left !== undefined && piece.top !== undefined && this.canvas) {
                 const row = Math.floor(pieceData.tile / 8);
                 const col = pieceData.tile % 8;
                 piece.scaleToHeight(this.tileSize);
@@ -1437,34 +1528,34 @@ class CanvasChessBoard {
             this.promotionDialog.scaleToWidth(this.size);
             (_a = this.promotionDialog) === null || _a === void 0 ? void 0 : _a.moveTo(500);
             // knight
-            let y = (this.size * .67) + 4;
-            let x = (this.size * .205);
-            (_b = this.knightButton) === null || _b === void 0 ? void 0 : _b.scaleToHeight(this.size * .15);
-            (_c = this.knightButton) === null || _c === void 0 ? void 0 : _c.scaleToWidth(this.size * .15);
+            let y = this.size * 0.67 + 4;
+            let x = this.size * 0.205;
+            (_b = this.knightButton) === null || _b === void 0 ? void 0 : _b.scaleToHeight(this.size * 0.15);
+            (_c = this.knightButton) === null || _c === void 0 ? void 0 : _c.scaleToWidth(this.size * 0.15);
             (_d = this.knightButton) === null || _d === void 0 ? void 0 : _d.set('left', x);
             (_e = this.knightButton) === null || _e === void 0 ? void 0 : _e.set('top', y);
             (_f = this.knightButton) === null || _f === void 0 ? void 0 : _f.moveTo(510);
             (_g = this.knightButton) === null || _g === void 0 ? void 0 : _g.setCoords();
             // bishop
-            x = (this.size * .4);
-            (_h = this.bishopButton) === null || _h === void 0 ? void 0 : _h.scaleToHeight(this.size * .15);
-            (_j = this.bishopButton) === null || _j === void 0 ? void 0 : _j.scaleToWidth(this.size * .15);
+            x = this.size * 0.4;
+            (_h = this.bishopButton) === null || _h === void 0 ? void 0 : _h.scaleToHeight(this.size * 0.15);
+            (_j = this.bishopButton) === null || _j === void 0 ? void 0 : _j.scaleToWidth(this.size * 0.15);
             (_k = this.bishopButton) === null || _k === void 0 ? void 0 : _k.set('left', x);
             (_l = this.bishopButton) === null || _l === void 0 ? void 0 : _l.set('top', y);
             (_m = this.bishopButton) === null || _m === void 0 ? void 0 : _m.moveTo(510);
             (_o = this.bishopButton) === null || _o === void 0 ? void 0 : _o.setCoords();
             // rook
-            x = (this.size * .595);
-            (_p = this.rookButton) === null || _p === void 0 ? void 0 : _p.scaleToHeight(this.size * .15);
-            (_q = this.rookButton) === null || _q === void 0 ? void 0 : _q.scaleToWidth(this.size * .15);
+            x = this.size * 0.595;
+            (_p = this.rookButton) === null || _p === void 0 ? void 0 : _p.scaleToHeight(this.size * 0.15);
+            (_q = this.rookButton) === null || _q === void 0 ? void 0 : _q.scaleToWidth(this.size * 0.15);
             (_r = this.rookButton) === null || _r === void 0 ? void 0 : _r.set('left', x);
             (_s = this.rookButton) === null || _s === void 0 ? void 0 : _s.set('top', y);
             (_t = this.rookButton) === null || _t === void 0 ? void 0 : _t.moveTo(510);
             (_u = this.rookButton) === null || _u === void 0 ? void 0 : _u.setCoords();
             // queen
-            x = (this.size * .79);
-            (_v = this.queenButton) === null || _v === void 0 ? void 0 : _v.scaleToHeight(this.size * .15);
-            (_w = this.queenButton) === null || _w === void 0 ? void 0 : _w.scaleToWidth(this.size * .15);
+            x = this.size * 0.79;
+            (_v = this.queenButton) === null || _v === void 0 ? void 0 : _v.scaleToHeight(this.size * 0.15);
+            (_w = this.queenButton) === null || _w === void 0 ? void 0 : _w.scaleToWidth(this.size * 0.15);
             (_x = this.queenButton) === null || _x === void 0 ? void 0 : _x.set('left', x);
             (_y = this.queenButton) === null || _y === void 0 ? void 0 : _y.set('top', y);
             (_z = this.queenButton) === null || _z === void 0 ? void 0 : _z.moveTo(510);
@@ -2116,7 +2207,7 @@ GamescoreUxComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.pgnData = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.container = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.scoreItems = _t);
-    } }, inputs: { gameScoreFontSize: "gameScoreFontSize", UUID: "UUID", scoreWidth: "scoreWidth", viewType: "viewType" }, outputs: { scoreFontFamily: "scoreFontFamily", scoreFontSize: "scoreFontSize", resizing: "resizing", currentItem: "currentItem", currentScoreItem: "currentScoreItem" }, decls: 12, vars: 4, consts: [[1, "gs-menu", 3, "click"], ["scoreItemMenu", ""], [1, "gamescore-container"], [1, "score-title"], ["class", "score-list", 4, "ngIf"], ["value", "[Event \"GMA, Wijk aan Zee NED\"]\n[Site \"?\"]\n[Date \"2003.??.??\"]\n[Round \"1\"]\n[White \"Anand,V\"]\n[Black \"Radjabov,T\"]\n[Result \"1/2\"]\n[WhiteElo \"2750\"]\n[BlackElo \"2620\"]\n[ECO \"C12\"]\n[PlyCount \"55\"]\n[Annotator \"Hathaway\"]\n\n1. e4 e6 \n{ Im not terribly familiar with the style of Radjabov, so I dont know if this is his usual opening. }\n2. d4 d5 3. Nc3 Nf6 (3...Bb4 \n{ The Winawer Variation is probably best, though not as easy to play. }) 4. Bg5\n{ threatens e4-e5xf6 }\n (4. e5 \n{ keeps pieces on the board and avoids ...dxe4 }) 4...Bb4 (4...Be7 \n{ is more common and aims to trade dark-square bishops to ease Blacks cramp }) (4...dxe4 \n{ aims to avoid any cramp by bringing pieces into alignment for trading, though White does get at least one very good piece (Ne4 or Bg5) and an easier time castling queen-side, to stir up king-side threats }\n 5. Nxe4 Be7  (\n{ or Rubinsteins }\n 5...Nbd7) ) 5. e5 h6 6. Bd2 (6. Bh4 g5 7. exf6 gxh4 \n{ Black seems to equalize a little easier after this as he can win Pf6 in exchange for Ph4. }) 6...Bxc3 (6...Nfd7 7. Qg4 \n{ and White isnt incurring any weaknesses, but is either gaining Bb4 for Nc3 or after ...Bb4-f8 Black is cramped again }\n  (7. Nb5 $5 Bxd2+ 8. Qxd2 a6 9. Na3) ) 7. bxc3 Ne4 8. Qg4\n{ White immediately takes aim at the backward Pg7 & Rh8 and usually Pf7 & Ke8. For the moment Bd2 serves to defend Pc3 and to prevent ...Qd8-g5 (offering a queen trade to end the pressure) . }\n (\n{ While }\n 8. h4 \n{ is often useful in the French Defense with this pawn structure, I dont know that its been tried in this opening on this move. }) 8...g6 9. Bd3 (9. h4 \n{ could take over for Bd2 in guarding g5 and preparing a later attack by f2-f4, h4-h5 or vice versa. It also would allow Rh1 to develop to build the direct frontal threats to Pf7 & Pg6. }\n 9...c5 10. Bd3 Nxd2 11. Kxd2 Qa5 12. dxc5 Qxc5 13. Ne2 Qxf2 $4 14. Raf1 Qc5 15. Bxg6 fxg6 16. Qxg6+)  (9. Qd1 \n{ Fritz7; Odd! }) 9...Nxd2 10. Kxd2 c5 11. Nf3\n{ This has been considered the main line for many years, but I wonder if White can allow ...c5-c4 and not use more pawns to fight through Blacks pawns. }\n (11. dxc5 \n{ is probably still wrong because of ...Qg5+ }) (11. h4 \n{ still makes sense }) 11...Bd7 (11...c4 $6 \n{ The problem with this is that however much it slows White, it also limits Blacks queen-side offensive possibilities. }) (\n{ Prematurely playing }\n 11...cxd4 \n{ lets White straighten-out his pawns and Black has made no real progress. }\n 12. cxd4)  (11...Qa5 $5 \n{ Fritz7: with the idea of ...cxd4 }) 12. dxc5 Qe7 13. Rab1 Bc6 14. Nd4 Nd7\n{ These last few moves have been quite unusual for a French Defense, but they make sense; Qe7 defends Pf7 while Bc6 defends Pb7 and Nd7 threatens Pc5 & Pe5. }\n15. Rhe1 (15. Nxc6 bxc6 16. Rb7 Qxc5 17. Qf4 g5 18. Qd4 Qa5 19. Rb2 c5 $11 \n{ Fritz7 }) 15...Nxc5 16. Re3\n{ another way of getting the rook into position, in front of the king-side pawns, to threaten Blacks king-side pawns }\n16...h5 17. Qg3 O-O-O\n{ After this it would seem Blacks pieces can handle any threats White can generate. However, black might also have ideas of winning. How might he do that? Well, ...Be8, ...Kc8-b8-a8, ...Rd8-c8, ...Nc5-a4 and Pc3 is a target (slow I know) . Another idea is to keep Kd2 from ever escaping to safety by advancing ...h5-h4-h3 to break open the king-side and open the h-file for Blacks rooks. }\n (17...h4 $15 \n{ Fritz7 }) (17...Nxd3 $15 \n{ Fritz7 }) 18. Ke1 Qc7 (18...h4 19. Qg4 Rh5) 19. h4\n{ Anand aims to keep the king-side perfectly safe to ensure a draw. }\n (19. Qh4 \n{ Fritz7 }) 19...Qa5 20. Kf1 (20. Nxc6 bxc6 21. Kf1 Kd7 20. Qf4 Ke8 $11 \n{ Fritz7 }) 20...Rd7 (\n{ Premature is }\n 20...Qxa2 21. Ree1 Qa5  (21...Ba4 $11 \n{ Fritz7 })  22. Ra1 Qxc3 23. Nxc6 bxc6 24. Ba6+ $18) 21. Qf4\n{ This general activity is perfect. It threatens Pf7, defends Nd4 and in some cases prepares for Qf4-b4 to attack Kc8. }\n (21. Ree1 \n{ Fritz7 }) (21. Nxc6 bxc6 22. Ree1 \n{ Fritz7 }) 21...Rhd8\n{ Black is probably wondering why he organized his pieces to only defend light squares. Only Qa5 and Nc5 can get to dark squares and that makes Whites task of coordinating much easier. }\n (21...Qxa2 \n{ still premature }\n 22. Nxc6 bxc6 23. Qb4 Nb7 24. Ree1)  (21...Qxc3 $4 22. Nxc6 bxc6 23. Ba6+)  (21...Rc7 $14 \n{ Fritz7 }) (21...Na4 $14 \n{ Fritz7 }) 22. Kg1 (22. Nxc6 bxc6 23. Qb4 Qxb4 24. cxb4 d4 25. Ree1 Na4 $11 \n{ Fritz7 }) 22...Nxd3 23. Rxd3 (23. cxd3 Qxc3 24. Rg3 Rc7 $14 \n{ Fritz7 }) 23...Qc5 (23...Qxa2 24. Rdd1 Qc4 $11 \n{ Fritz7 }) 24. Rb4 a5 $2 (24...Rc7 \n{ Mark and Fritz7 agree! }) 25. Rb1 Rc7 26. Qc1 Be8 27. Nb3 (27. Qb2 \n{ If White commits too quickly to the b-file then Black might actually create some play against Ph4 and on the c-file. }\n 27...Qe7  (27...a4 $11 \n{ Fritz7 })  28. Nf3 Rc4 \n{ possibly preparing ...b5 }) 27...Qb6 (27...Qc4 28. Nxa5 Qxh4 $14 \n{ Fritz7 }) 28. Nd4\n{ Black created the weakness (Pa5) and cant quite defend it, so Anand forces a draw. }\n1/2-1/2", "type", "text", 1, "input-box", 2, "visibility", "hidden", "display", "none", 3, "click", "change"], ["pgnData", "", "pgnBox", ""], [1, "resize-handle", 3, "id", "touchstart", "touchend", "mouseup", "mousedown"], ["resizeHandle", ""], [1, "score-list"], [3, "data", 4, "ngFor", "ngForOf"], [3, "data"], ["scoreItem", ""]], template: function GamescoreUxComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { gameScoreFontSize: "gameScoreFontSize", UUID: "UUID", scoreWidth: "scoreWidth", viewType: "viewType" }, outputs: { scoreFontFamily: "scoreFontFamily", scoreFontSize: "scoreFontSize", resizing: "resizing", currentItem: "currentItem", currentScoreItem: "currentScoreItem" }, decls: 12, vars: 4, consts: [[1, "gs-menu", 3, "click"], ["scoreItemMenu", ""], [1, "gamescore-container"], [1, "score-title"], ["class", "score-list", 4, "ngIf"], ["value", "[Event \"GMA, Wijk aan Zee NED\"]\n[Site \"?\"]\n[Date \"2003.??.??\"]\n[Round \"1\"]\n[White \"Anand,V\"]\n[Black \"Radjabov,T\"]\n[Result \"1/2\"]\n[WhiteElo \"2750\"]\n[BlackElo \"2620\"]\n[ECO \"C12\"]\n[PlyCount \"55\"]\n[Annotator \"Hathaway\"]\n\n1. e4 e6\n{ Im not terribly familiar with the style of Radjabov, so I dont know if this is his usual opening. }\n2. d4 d5 3. Nc3 Nf6 (3...Bb4\n{ The Winawer Variation is probably best, though not as easy to play. }) 4. Bg5\n{ threatens e4-e5xf6 }\n (4. e5\n{ keeps pieces on the board and avoids ...dxe4 }) 4...Bb4 (4...Be7\n{ is more common and aims to trade dark-square bishops to ease Blacks cramp }) (4...dxe4\n{ aims to avoid any cramp by bringing pieces into alignment for trading, though White does get at least one very good piece (Ne4 or Bg5) and an easier time castling queen-side, to stir up king-side threats }\n 5. Nxe4 Be7  (\n{ or Rubinsteins }\n 5...Nbd7) ) 5. e5 h6 6. Bd2 (6. Bh4 g5 7. exf6 gxh4\n{ Black seems to equalize a little easier after this as he can win Pf6 in exchange for Ph4. }) 6...Bxc3 (6...Nfd7 7. Qg4\n{ and White isnt incurring any weaknesses, but is either gaining Bb4 for Nc3 or after ...Bb4-f8 Black is cramped again }\n  (7. Nb5 $5 Bxd2+ 8. Qxd2 a6 9. Na3) ) 7. bxc3 Ne4 8. Qg4\n{ White immediately takes aim at the backward Pg7 & Rh8 and usually Pf7 & Ke8. For the moment Bd2 serves to defend Pc3 and to prevent ...Qd8-g5 (offering a queen trade to end the pressure) . }\n (\n{ While }\n 8. h4\n{ is often useful in the French Defense with this pawn structure, I dont know that its been tried in this opening on this move. }) 8...g6 9. Bd3 (9. h4\n{ could take over for Bd2 in guarding g5 and preparing a later attack by f2-f4, h4-h5 or vice versa. It also would allow Rh1 to develop to build the direct frontal threats to Pf7 & Pg6. }\n 9...c5 10. Bd3 Nxd2 11. Kxd2 Qa5 12. dxc5 Qxc5 13. Ne2 Qxf2 $4 14. Raf1 Qc5 15. Bxg6 fxg6 16. Qxg6+)  (9. Qd1\n{ Fritz7; Odd! }) 9...Nxd2 10. Kxd2 c5 11. Nf3\n{ This has been considered the main line for many years, but I wonder if White can allow ...c5-c4 and not use more pawns to fight through Blacks pawns. }\n (11. dxc5\n{ is probably still wrong because of ...Qg5+ }) (11. h4\n{ still makes sense }) 11...Bd7 (11...c4 $6\n{ The problem with this is that however much it slows White, it also limits Blacks queen-side offensive possibilities. }) (\n{ Prematurely playing }\n 11...cxd4\n{ lets White straighten-out his pawns and Black has made no real progress. }\n 12. cxd4)  (11...Qa5 $5\n{ Fritz7: with the idea of ...cxd4 }) 12. dxc5 Qe7 13. Rab1 Bc6 14. Nd4 Nd7\n{ These last few moves have been quite unusual for a French Defense, but they make sense; Qe7 defends Pf7 while Bc6 defends Pb7 and Nd7 threatens Pc5 & Pe5. }\n15. Rhe1 (15. Nxc6 bxc6 16. Rb7 Qxc5 17. Qf4 g5 18. Qd4 Qa5 19. Rb2 c5 $11\n{ Fritz7 }) 15...Nxc5 16. Re3\n{ another way of getting the rook into position, in front of the king-side pawns, to threaten Blacks king-side pawns }\n16...h5 17. Qg3 O-O-O\n{ After this it would seem Blacks pieces can handle any threats White can generate. However, black might also have ideas of winning. How might he do that? Well, ...Be8, ...Kc8-b8-a8, ...Rd8-c8, ...Nc5-a4 and Pc3 is a target (slow I know) . Another idea is to keep Kd2 from ever escaping to safety by advancing ...h5-h4-h3 to break open the king-side and open the h-file for Blacks rooks. }\n (17...h4 $15\n{ Fritz7 }) (17...Nxd3 $15\n{ Fritz7 }) 18. Ke1 Qc7 (18...h4 19. Qg4 Rh5) 19. h4\n{ Anand aims to keep the king-side perfectly safe to ensure a draw. }\n (19. Qh4\n{ Fritz7 }) 19...Qa5 20. Kf1 (20. Nxc6 bxc6 21. Kf1 Kd7 20. Qf4 Ke8 $11\n{ Fritz7 }) 20...Rd7 (\n{ Premature is }\n 20...Qxa2 21. Ree1 Qa5  (21...Ba4 $11\n{ Fritz7 })  22. Ra1 Qxc3 23. Nxc6 bxc6 24. Ba6+ $18) 21. Qf4\n{ This general activity is perfect. It threatens Pf7, defends Nd4 and in some cases prepares for Qf4-b4 to attack Kc8. }\n (21. Ree1\n{ Fritz7 }) (21. Nxc6 bxc6 22. Ree1\n{ Fritz7 }) 21...Rhd8\n{ Black is probably wondering why he organized his pieces to only defend light squares. Only Qa5 and Nc5 can get to dark squares and that makes Whites task of coordinating much easier. }\n (21...Qxa2\n{ still premature }\n 22. Nxc6 bxc6 23. Qb4 Nb7 24. Ree1)  (21...Qxc3 $4 22. Nxc6 bxc6 23. Ba6+)  (21...Rc7 $14\n{ Fritz7 }) (21...Na4 $14\n{ Fritz7 }) 22. Kg1 (22. Nxc6 bxc6 23. Qb4 Qxb4 24. cxb4 d4 25. Ree1 Na4 $11\n{ Fritz7 }) 22...Nxd3 23. Rxd3 (23. cxd3 Qxc3 24. Rg3 Rc7 $14\n{ Fritz7 }) 23...Qc5 (23...Qxa2 24. Rdd1 Qc4 $11\n{ Fritz7 }) 24. Rb4 a5 $2 (24...Rc7\n{ Mark and Fritz7 agree! }) 25. Rb1 Rc7 26. Qc1 Be8 27. Nb3 (27. Qb2\n{ If White commits too quickly to the b-file then Black might actually create some play against Ph4 and on the c-file. }\n 27...Qe7  (27...a4 $11\n{ Fritz7 })  28. Nf3 Rc4\n{ possibly preparing ...b5 }) 27...Qb6 (27...Qc4 28. Nxa5 Qxh4 $14\n{ Fritz7 }) 28. Nd4\n{ Black created the weakness (Pa5) and cant quite defend it, so Anand forces a draw. }\n1/2-1/2", "type", "text", 1, "input-box", 2, "visibility", "hidden", "display", "none", 3, "click", "change"], ["pgnData", "", "pgnBox", ""], [1, "resize-handle", 3, "id", "touchstart", "touchend", "mouseup", "mousedown"], ["resizeHandle", ""], [1, "score-list"], [3, "data", 4, "ngFor", "ngForOf"], [3, "data"], ["scoreItem", ""]], template: function GamescoreUxComponent_Template(rf, ctx) { if (rf & 1) {
         const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "app-menu-game-score-item", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function GamescoreUxComponent_Template_app_menu_game_score_item_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r9); const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](1); return _r0.open = false; });
@@ -2417,21 +2508,10 @@ class OlgaStatusComponent {
     }
 }
 OlgaStatusComponent.ɵfac = function OlgaStatusComponent_Factory(t) { return new (t || OlgaStatusComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_game_service__WEBPACK_IMPORTED_MODULE_2__["GameService"])); };
-OlgaStatusComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: OlgaStatusComponent, selectors: [["olga-status"]], decls: 8, vars: 3, consts: [[1, "status-text"], [1, "button", 3, "click"], [1, "feather"], [0, "xlink", "href", "/assets/images/feather-sprite.svg#cpu"], [1, "buttontext"]], template: function OlgaStatusComponent_Template(rf, ctx) { if (rf & 1) {
+OlgaStatusComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: OlgaStatusComponent, selectors: [["olga-status"]], decls: 3, vars: 3, consts: [[1, "status-text"]], template: function OlgaStatusComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](2, "async");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function OlgaStatusComponent_Template_div_click_3_listener() { return ctx.openEngine(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "svg", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "use", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "div", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Engine");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
@@ -2752,7 +2832,9 @@ __webpack_require__.r(__webpack_exports__);
 
 // Game Score
 class GameScoreVariation {
-    constructor(variationData = []) { this.variationData = variationData; }
+    constructor(variationData = []) {
+        this.variationData = variationData;
+    }
 }
 class GameScoreAnnotation {
     constructor(annotation = '') {
@@ -2816,8 +2898,7 @@ class GameScoreItem {
         }
         return null;
     }
-    select() {
-    }
+    select() { }
 }
 class ChessMove {
     constructor() {
@@ -2825,6 +2906,25 @@ class ChessMove {
         this.from = 0;
         this.role = '';
         this.color = '';
+    }
+    static fromNode(node) {
+        const move = new ChessMove();
+        const mDescriptor = node._info.moveDescriptor;
+        if (mDescriptor) {
+            move.from = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(mDescriptor.from());
+            move.to = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(mDescriptor.to());
+            if (mDescriptor.isCapture()) {
+                move.capture = { role: mDescriptor.capturedPiece().toUpperCase(), color: mDescriptor.capturedColoredPiece()[0] };
+            }
+            if (mDescriptor.isCastling()) {
+                // input castling data
+            }
+            if (mDescriptor.isPromotion()) {
+                move.promotion = { role: mDescriptor.promotion() };
+            }
+            return move;
+        }
+        return null;
     }
 }
 class ChessGame {
@@ -2849,7 +2949,10 @@ class ChessGame {
         }
     }
     static compareKNode(left, right) {
-        if (left !== null && right !== null && left !== undefined && right !== undefined) {
+        if (left !== null &&
+            right !== null &&
+            left !== undefined &&
+            right !== undefined) {
             const leftMove = left._info.moveDescriptor;
             const rightMove = right._info.moveDescriptor;
             return (leftMove.from() === rightMove.from() && leftMove.to() === rightMove.to());
@@ -2857,9 +2960,13 @@ class ChessGame {
         return false;
     }
     static compareVariation(left, right) {
-        if (left !== null && right !== null && left !== undefined && right !== undefined) {
+        if (left !== null &&
+            right !== null &&
+            left !== undefined &&
+            right !== undefined) {
             if (ChessGame.compareKNode(left.first(), right.first())) {
-                return (left.comment() === right.comment() && left.initialFullMoveNumber() === right.initialFullMoveNumber());
+                return (left.comment() === right.comment() &&
+                    left.initialFullMoveNumber() === right.initialFullMoveNumber());
             }
         }
         return false;
@@ -2926,7 +3033,8 @@ class ChessGame {
             const fromSquare = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"][move.from];
             const next = this.currentNode.next();
             const legal = this.position.isMoveLegal(fromSquare, toSquare);
-            if (pgnMove && pgnMove.from() == fromSquare && pgnMove.to() == toSquare) { // not a variant
+            if (pgnMove && pgnMove.from() == fromSquare && pgnMove.to() == toSquare) {
+                // not a variant
                 this.position.play(pgnMove);
                 if (fromPGN) {
                     if (pgnMove.isPromotion()) {
@@ -3007,144 +3115,106 @@ class ChessGame {
     getPosition() {
         return this.position;
     }
-    setGame(game) {
-        this.game = game;
-        this.variation = this.game.mainVariation();
-        this.gameVariations = [];
-        this.gameVariations.push(this.variation);
-        this.position = this.variation.initialPosition();
-        this.fen = this.position.fen();
-        this.currentNode = this.startNode = this.variation.first();
-        if (this.gameService.board.value) {
-            this.gameService.board.value.setBoardToGamePosition();
-        }
+    generateGameScore() {
         const items = [];
         this.nodeMap = [];
-        let nextScore = this.startNode;
+        let nextScore = this.variation.first();
         let index = 0;
         let previous = null;
+        this.score.next([]);
         while (nextScore) {
             if (nextScore) {
                 const gItem = new GameScoreItem(this, index, nextScore);
                 this.nodeMap[index] = gItem;
                 previous = gItem;
-                //this.insertVariation(index, gItem);
                 nextScore = nextScore.next();
                 items.push(gItem);
                 ++index;
             }
         }
+        this.lastNode = this.nodeMap[this.nodeMap.length - 1];
         this.score.next(items);
+        this.gameService._items.next(items);
         console.log(this.nodeMap);
+    }
+    setGame(game) {
+        this.game = game;
+        this.variation = this.game.mainVariation();
+        this.startNode = this.variation.first();
+        this.position = this.variation.initialPosition();
+        this.currentIndex = -1;
+        this.fen = this.position.fen();
+        this.currentNode = null;
+        if (this.gameService.board.value) {
+            this.gameService.board.value.setBoardToGamePosition();
+        }
+        window.setTimeout(this.generateGameScore.bind(this), 10);
+    }
+    navigateToNode(index) {
+        var _a, _b;
+        if (this.currentIndex < index) {
+            while (this.currentIndex < index) {
+                const node = this.nodeMap[++this.currentIndex];
+                if (node) {
+                    const cmove = ChessMove.fromNode(node.move);
+                    if (cmove) {
+                        if (this.position.play(node.move._info.moveDescriptor)) {
+                            (_a = this.gameService.board.value) === null || _a === void 0 ? void 0 : _a.makeMove(cmove);
+                            this.currentNode = node.move;
+                        }
+                    }
+                }
+            }
+            return;
+        }
+        if (this.currentIndex > index) {
+            while (this.currentIndex > index && this.currentIndex >= -1) {
+                const node = this.nodeMap[this.currentIndex--];
+                if (node) {
+                    const cmove = ChessMove.fromNode(node.move);
+                    if (cmove) {
+                        this.position = node.move.position();
+                        (_b = this.gameService.board.value) === null || _b === void 0 ? void 0 : _b.unMakeMove(cmove);
+                        this.currentNode = node.move;
+                    }
+                }
+            }
+            return;
+        }
     }
     // navigation
     advance(updateBoard = true) {
         if (!this.isFinalPosition()) {
             const next = this.currentIndex + 1;
-            const node = this.nodeMap[next];
-            if (node) { // next exists
-                this.navigateToNode(node);
+            if (next < this.nodeMap.length && next >= 0) {
+                this.navigateToNode(next);
                 return true;
             }
         }
-        // if (this.position) {
-        //   if (this.currentNode && (this.position.isMoveLegal(this.currentNode._info.moveDescriptor.from(), this.currentNode._info.moveDescriptor.to()) !== false)) {
-        //     const move = new ChessMove();
-        //     move.from = SquareNames.indexOf(this.currentNode._info.moveDescriptor.from());
-        //     move.to = SquareNames.indexOf(this.currentNode._info.moveDescriptor.to());
-        //     let newTo = move.to;
-        //     let newFrom = move.from;
-        //     if (this.currentNode._info.moveDescriptor._to >= 64) {
-        //       let rowFrom = Math.ceil(newFrom / 8);
-        //       let colFrom = newFrom % 8;
-        //       newFrom = (rowFrom * 8) - colFrom;
-        //       let rowTo = Math.floor(newTo / 8);
-        //       let colTo = newTo % 8;
-        //       newTo = (rowTo * 8) - colTo;
-        //     }
-        //     this.makeMove(move, true);
-        //     return true;
-        //   }
-        // }
         return false;
     }
-    navigateToNode(node, variation) {
-        if (variation == null || ChessGame.compareVariation(this.variation, variation)) {
-            let searchNode = this.startNode;
-            let notFound = true;
-            while (searchNode && notFound) {
-                if (ChessGame.compareKNode(node, searchNode)) {
-                    notFound = false;
-                }
-                else {
-                    searchNode = searchNode.next();
-                }
-            }
-            if (!notFound) {
-                this.setNode(searchNode);
-            }
-        }
-    }
     moveToStart() {
-        var _a, _b;
-        this.position = this.game.initialPosition();
-        this.variation = this.game.mainVariation();
-        this.startNode = this.currentNode = this.variation.first();
-        this.lastNode = this.getLastNode();
-        if (!this.currentNode) {
-            this.currentNode = this.lastNode;
+        while (this.previous()) {
         }
-        this.fen = this.position.fen();
-        (_a = this.gameService.board.value) === null || _a === void 0 ? void 0 : _a.setBoardToGamePosition();
-        (_b = this.gameService.status.value) === null || _b === void 0 ? void 0 : _b.updateStatus(this.position.turn());
     }
     moveToEnd() {
-        this.setNode(this.lastNode);
-        // if (this.currentNode && this.position && this.currentNode.next() && this.gameService.board.value) {
-        //   while (this.advance()) { }
-        // }
+        this.navigateToNode(this.nodeMap.length - 1);
     }
     previous() {
-        var _a;
-        if (!this.isStartingPosition() && this.gameService.board.value) {
-            if (!ChessGame.compareKNode(this.startNode, this.currentNode)) {
-                let currentNode = this.startNode;
-                let previous = null;
-                while (currentNode.next() && !ChessGame.compareKNode(currentNode.next(), this.currentNode)) {
-                    previous = currentNode;
-                    currentNode = currentNode.next();
-                }
-                const move = currentNode._info.moveDescriptor;
-                if (this.gameService.board.value) {
-                    const unmove = new ChessMove();
-                    unmove.to = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(move.to());
-                    unmove.from = _canvas_chessboard_canvas_chessboard_component__WEBPACK_IMPORTED_MODULE_3__["SquareNames"].indexOf(move.from());
-                    if (move.isCapture()) {
-                        const piece = move.capturedPiece();
-                        const color = move.color();
-                        if (piece && color) {
-                            unmove.capture = { role: piece.toUpperCase(), color: color === 'w' ? 'b' : 'w' };
-                        }
-                    }
-                    this.gameService.board.value.unMakeMove(unmove);
-                }
-                this.position = currentNode.positionBefore();
-                (_a = this.gameService.status.value) === null || _a === void 0 ? void 0 : _a.updateStatus(this.position.turn(), previous);
-                this.fen = this.position.fen();
-                this.currentNode = currentNode;
-                if (move.isCastling()) {
-                    this.gameService.board.value.setBoardToGamePosition();
-                }
+        if (!this.isStartingPosition()) {
+            const prev = this.currentIndex - 1;
+            if (prev < this.nodeMap.length && prev >= -1) {
+                this.navigateToNode(prev);
                 return true;
             }
         }
         return false;
     }
     isStartingPosition() {
-        return ChessGame.compareKNode(this.variation.first(), this.currentNode);
+        return this.currentIndex === -1;
     }
     isFinalPosition() {
-        return (!this.currentNode || this.currentNode.next() === null);
+        return this.currentIndex === this.nodeMap.length;
     }
     createScoreItems() {
         return [];
@@ -3209,7 +3279,7 @@ class GameService {
         }
     }
     advance() {
-        if (this._game && !this._game.isFinalPosition()) {
+        if (this._game) {
             this._game.advance();
         }
     }
@@ -3223,10 +3293,8 @@ class GameService {
             this._game.moveToEnd();
         }
     }
-    togglePlay() {
-    }
-    openEngine() {
-    }
+    togglePlay() { }
+    openEngine() { }
     loadPGN(pgn) {
         // parse potential multiple games
         console.log('Loading PGN: ');
@@ -3276,7 +3344,7 @@ GameService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjec
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](GameService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
-                providedIn: 'root'
+                providedIn: 'root',
             }]
     }], function () { return [{ type: _olga_service__WEBPACK_IMPORTED_MODULE_4__["OlgaService"] }]; }, { figurineNotation: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -3305,6 +3373,7 @@ __webpack_require__.r(__webpack_exports__);
 class LayoutService {
     constructor() {
         this.landscapeOrientation = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](true);
+        this.mobileView = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](false);
         this.boardSize = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](480);
         this.scoreSize = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](340);
         this.olga = null;
@@ -3313,46 +3382,73 @@ class LayoutService {
         this.board = null;
         this.resizeElement = null;
         this.preferredLayout = 'auto';
-        this.preferredRatio = .3;
+        this.preferredRatioLandscape = 0.3;
+        this.preferredRatioPortrait = 0.4;
         this.boardRatio = 1;
+    }
+    rtl(width, height, gsSize) {
+        const isMobile = this.mobileView.value;
+        if (isMobile) {
+            // perform mobile setup
+        }
+        else {
+            // prepare desktop view
+            // determine the size of Olga and preferred ratio (unless we have already )
+        }
+    }
+    rtp(width, height, gsSize) {
+        const isMobile = this.mobileView.value;
+        if (isMobile) {
+            // perform mobile setup
+        }
+        else {
+            // prepare desktop view
+        }
     }
     resizeToLandscape(width, height, gsSize) {
         var _a, _b;
-        if (this.olga && this.olga.gameScoreElement && this.olga.controlsElement && this.olga.statusElement && this.olga.settingsMenuComponent) {
+        if (this.olga &&
+            this.olga.gameScoreElement &&
+            this.olga.controlsElement &&
+            this.olga.statusElement &&
+            this.olga.settingsMenuComponent) {
             let boardSize = 0;
             const titleSize = 80;
             if (this.resizeElement) {
-                this.resizeElement.style.left = "-10px";
-                this.resizeElement.style.top = "calc(50% - 3em)";
-                this.resizeElement.style.width = "1.2em";
-                this.resizeElement.style.height = "6em";
+                this.resizeElement.style.left = '-10px';
+                this.resizeElement.style.top = 'calc(50% - 3em)';
+                this.resizeElement.style.width = '1.2em';
+                this.resizeElement.style.height = '6em';
             }
             if (!gsSize) {
                 let padding = width * 0.05;
                 if (padding >= 16 || padding <= 10) {
                     padding = 12;
                 }
-                let boardSize = Math.floor((1 - this.preferredRatio) * width);
+                boardSize = Math.floor((1 - this.preferredRatioLandscape) * width);
                 if (boardSize > height) {
-                    boardSize = height - (padding / 2);
+                    boardSize = height - padding / 2;
                 }
                 let controlsHeight = boardSize / 7;
                 controlsHeight = controlsHeight > 62 ? 62 : controlsHeight;
-                let gsWidth = (width - boardSize) - padding;
+                let gsWidth = width - boardSize - padding;
                 (_a = this.board) === null || _a === void 0 ? void 0 : _a.setSize(boardSize);
-                let gsHeight = (boardSize - 200) - controlsHeight;
+                let gsHeight = boardSize - 200 - controlsHeight;
                 // game score
+                this.olga.gameScoreElement.style.left = '';
                 this.olga.gameScoreElement.style.top = titleSize + 2 + 'px'; // 64 represents the controls ux
                 this.olga.gameScoreElement.style.width = gsWidth + 'px';
                 this.olga.gameScoreElement.style.height = gsHeight + 'px';
                 // controls
                 this.olga.controlsElement.style.left = '';
-                this.olga.controlsElement.style.top = (gsHeight + (titleSize + 10)).toString() + 'px'; // 64 represents the 
+                this.olga.controlsElement.style.top =
+                    (gsHeight + (titleSize + 10)).toString() + 'px'; // 64 represents the
                 this.olga.controlsElement.style.width = (gsWidth - 2).toString() + 'px';
                 this.olga.controlsElement.style.height = controlsHeight + 'px';
                 this.olga.controlsElement.style.right = '1px';
                 this.olga.statusElement.style.left = '';
-                this.olga.statusElement.style.top = (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the 
+                this.olga.statusElement.style.top =
+                    (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the
                 this.olga.statusElement.style.width = gsWidth.toString() + 'px';
                 this.olga.statusElement.style.height = controlsHeight + 'px';
                 this.olga.statusElement.style.right = '1px';
@@ -3365,7 +3461,7 @@ class LayoutService {
                     padding = 18;
                 }
                 const widthAvailable = window.innerWidth - (gsSize + padding);
-                let boardSize = Math.floor(widthAvailable / 8) * 8;
+                boardSize = Math.floor(widthAvailable / 8) * 8;
                 if (boardSize >= window.innerHeight) {
                     boardSize = Math.floor((window.innerHeight - 16) / 8) * 8;
                     gsSize = window.innerWidth - boardSize + padding;
@@ -3373,18 +3469,21 @@ class LayoutService {
                 (_b = this.board) === null || _b === void 0 ? void 0 : _b.setSize(boardSize);
                 let controlsHeight = boardSize / 7;
                 controlsHeight = controlsHeight > 62 ? 62 : controlsHeight;
-                let gsHeight = (boardSize - 200) - controlsHeight;
+                let gsHeight = boardSize - 200 - controlsHeight;
                 // game score
+                this.olga.gameScoreElement.style.left = '';
                 this.olga.gameScoreElement.style.top = titleSize + 2 + 'px'; // 64 represents the controls ux
                 this.olga.gameScoreElement.style.width = gsSize + 'px';
                 this.olga.gameScoreElement.style.height = gsHeight + 'px';
                 // controls
                 this.olga.controlsElement.style.left = '';
-                this.olga.controlsElement.style.top = (gsHeight + titleSize + 34).toString() + 'px'; // 64 represents the 
+                this.olga.controlsElement.style.top =
+                    (gsHeight + titleSize + 34).toString() + 'px'; // 64 represents the
                 this.olga.controlsElement.style.width = (gsSize - 2).toString() + 'px';
                 this.olga.controlsElement.style.right = '1px';
                 this.olga.statusElement.style.left = '';
-                this.olga.statusElement.style.top = (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the 
+                this.olga.statusElement.style.top =
+                    (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the
                 this.olga.statusElement.style.width = gsSize.toString() + 'px';
                 this.olga.statusElement.style.right = '1px';
                 this.scoreSize.next(gsSize);
@@ -3396,28 +3495,37 @@ class LayoutService {
     resizeToPortrait(width, height, gsSize) {
         var _a, _b;
         if (this.olga) {
-            const boardSize = (width * this.boardRatio) - 6;
+            const boardSize = width * this.boardRatio - 6;
             (_a = this.board) === null || _a === void 0 ? void 0 : _a.setSize(boardSize);
+            if (this.olga.statusElement) {
+                this.olga.statusElement.style.top = (boardSize - 32).toString() + 'px'; // 64 represents the controls ux
+                this.olga.statusElement.style.left = 'calc(1% - 1px)';
+                this.olga.statusElement.style.width = '98%';
+                this.olga.statusElement.style.height = '52px';
+            }
             if (this.olga.boardElement) {
-                this.olga.boardElement.style.left = (width * ((1 - this.boardRatio) / 2)) + 'px';
+                this.olga.boardElement.style.left =
+                    width * ((1 - this.boardRatio) / 2) + 'px';
             }
             if (this.olga.gameScoreElement) {
-                this.olga.gameScoreElement.style.top = (boardSize + 108 + 'px'); // 64 represents the controls ux
-                this.olga.gameScoreElement.style.width = '100%';
-                this.olga.gameScoreElement.style.height = (boardSize / 3 > 425 ? 425 : boardSize / 3).toString() + 'px';
+                this.olga.gameScoreElement.style.top = boardSize + 129 + 'px'; // 64 represents the controls ux
+                this.olga.gameScoreElement.style.left = 'calc(1% - 1px)';
+                this.olga.gameScoreElement.style.width = 'calc(98%  + 2px)';
+                this.olga.gameScoreElement.style.height =
+                    (boardSize / 3 > 425 ? 425 : boardSize / 3).toString() + 'px';
             }
             if (this.olga.controlsElement) {
-                this.olga.controlsElement.style.top = (boardSize + 6).toString() + 'px'; // 64 represents the controls ux
-                this.olga.controlsElement.style.left = 'calc(1% - 3px)';
-                this.olga.controlsElement.style.right = '1%';
+                this.olga.controlsElement.style.top =
+                    (boardSize + 30).toString() + 'px'; // 64 represents the controls ux
+                this.olga.controlsElement.style.left = 'calc(1% - 1px)';
                 this.olga.controlsElement.style.width = '98%';
                 this.olga.controlsElement.style.height = '99px';
             }
             if (this.resizeElement) {
-                this.resizeElement.style.left = "calc(50% - 3em)";
-                this.resizeElement.style.top = "-4px";
-                this.resizeElement.style.width = "6em";
-                this.resizeElement.style.height = "1.2em";
+                this.resizeElement.style.left = 'calc(50% - 3em)';
+                this.resizeElement.style.top = '-4px';
+                this.resizeElement.style.width = '6em';
+                this.resizeElement.style.height = '1.2em';
             }
             (_b = this.olga.settingsMenuComponent) === null || _b === void 0 ? void 0 : _b.resize(width, height);
         }
@@ -3437,7 +3545,10 @@ class LayoutService {
         }, 250);
     }
     onSliderTouch(event) {
-        if (event.touches.length > 0 && this.landscapeOrientation && event && event.touches[0].clientX > 64) {
+        if (event.touches.length > 0 &&
+            this.landscapeOrientation &&
+            event &&
+            event.touches[0].clientX > 64) {
             if (this.olga && this.appContainer) {
                 let gsSize = window.innerWidth - event.touches[0].clientX;
                 const width = this.appContainer.nativeElement.clientWidth;
@@ -3464,7 +3575,9 @@ class LayoutService {
             }
         }
         else {
-            if (!this.landscapeOrientation && event && event.touches[0].clientY > 64) {
+            if (!this.landscapeOrientation &&
+                event &&
+                event.touches[0].clientY > 64) {
                 if (this.olga && this.appContainer) {
                     let gsSize = window.innerHeight - event.touches[0].clientY;
                     const width = this.appContainer.nativeElement.clientWidth;
