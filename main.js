@@ -645,14 +645,12 @@ class CanvasChessBoard {
                 const xC = piece.get('left');
                 let xN = (xC ? xC : 0);
                 if (xC && xC != this.pieceAnimation.x) {
-                    let increment = Math.floor((this.pieceAnimation.x - xC) / 10);
-                    if (increment == 0) {
-                        if (this.pieceAnimation.x > xC) {
-                            increment = 1;
-                        }
-                        else {
-                            increment = -1;
-                        }
+                    let increment = this.tileSize * .2;
+                    if (Math.abs(this.pieceAnimation.x - xC) < increment) {
+                        increment = this.pieceAnimation.x - xC;
+                    }
+                    else if (this.pieceAnimation.x < xC) {
+                        increment *= -1;
                     }
                     xN = xC + increment;
                     piece.set('left', xN);
@@ -660,14 +658,12 @@ class CanvasChessBoard {
                 const yC = piece.get('top');
                 let yN = (yC ? yC : 0);
                 if (yC && yC != this.pieceAnimation.y) {
-                    let increment = Math.floor((this.pieceAnimation.y - yC) / 10);
-                    if (increment == 0) {
-                        if (this.pieceAnimation.y > yC) {
-                            increment = 1;
-                        }
-                        else {
-                            increment = -1;
-                        }
+                    let increment = this.tileSize * .2;
+                    if (Math.abs(this.pieceAnimation.y - yC) < increment) {
+                        increment = this.pieceAnimation.y - yC;
+                    }
+                    else if (this.pieceAnimation.y < yC) {
+                        increment *= -1;
                     }
                     yN = yC + increment;
                     piece.set('top', yN);
@@ -675,7 +671,7 @@ class CanvasChessBoard {
                 piece.setCoords();
                 (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.requestRenderAll();
                 if (yN != this.pieceAnimation.y || xN != this.pieceAnimation.x) {
-                    window.setTimeout(this.updatePiece.bind(this), 6);
+                    window.setTimeout(this.updatePiece.bind(this), 12);
                 }
                 else {
                     this.pieceAnimation = null;
@@ -735,15 +731,17 @@ class CanvasChessBoard {
                         pieceObject.hoverCursor = 'grab';
                         pieceObject.moveCursor = 'grabbing';
                     }
+                    const tileSizeFragment = this.tileSize / 100;
+                    pieceObject.scaleToHeight(Math.ceil(tileSizeFragment * 90));
+                    const piecePadding = Math.ceil(tileSizeFragment * 3) + 1;
                     if (this.settings.orientation == 'white') {
-                        pieceObject.set('left', Math.floor(col * this.tileSize) + padding);
-                        pieceObject.set('top', Math.floor((7 - row) * this.tileSize) + padding);
+                        pieceObject.set('left', Math.floor(col * this.tileSize) + piecePadding);
+                        pieceObject.set('top', Math.floor((7 - row) * this.tileSize) + piecePadding);
                     }
                     else {
-                        pieceObject.set('left', Math.floor((7 - col) * this.tileSize) + padding);
-                        pieceObject.set('top', Math.floor(row * this.tileSize) + padding);
+                        pieceObject.set('left', Math.floor((7 - col) * this.tileSize) + piecePadding);
+                        pieceObject.set('top', Math.floor(row * this.tileSize) + piecePadding);
                     }
-                    pieceObject.scaleToHeight(this.tileSize);
                     pieceObject.setCoords();
                     this.pieces[tile] = { tile: tile, object: pieceObject };
                     this.tiles[tile].piece = { role, color };
@@ -1218,16 +1216,6 @@ class CanvasChessBoard {
                 const piecePadding = Math.ceil(tileSizeFragment * 3) + 1;
                 let xDest = 0;
                 let yDest = 0;
-                let x = 0;
-                const xSrc = piece.object.get('left');
-                if (xSrc) {
-                    x = xSrc;
-                }
-                let y = 0;
-                const ySrc = piece.object.get('top');
-                if (ySrc) {
-                    y = ySrc;
-                }
                 if (this.settings.orientation === 'white') {
                     xDest = (col * this.tileSize) + piecePadding;
                     yDest = ((7 - row) * this.tileSize) + piecePadding;
@@ -1260,14 +1248,19 @@ class CanvasChessBoard {
             if (piece.object) {
                 const row = Math.floor(move.from / 8);
                 const col = move.from % 8;
-                if (this.settings.orientation == 'white') {
-                    piece.object.set('left', col * this.tileSize);
-                    piece.object.set('top', (7 - row) * this.tileSize);
+                const tileSizeFragment = this.tileSize / 100;
+                const piecePadding = Math.ceil(tileSizeFragment * 3) + 1;
+                let xDest = 0;
+                let yDest = 0;
+                if (this.settings.orientation === 'white') {
+                    xDest = (col * this.tileSize) + piecePadding;
+                    yDest = ((7 - row) * this.tileSize) + piecePadding;
                 }
                 else {
-                    piece.object.set('left', (7 - col) * this.tileSize);
-                    piece.object.set('top', row * this.tileSize);
+                    xDest = ((7 - col) * this.tileSize) + piecePadding;
+                    yDest = (row * this.tileSize) + piecePadding;
                 }
+                this.startMoveAnimation(piece.object, xDest, yDest);
                 const from = row * 8 + col;
                 const capture = move.capture;
                 if (capture) {
@@ -1289,13 +1282,16 @@ class CanvasChessBoard {
         if (piece) {
             const row = Math.floor(move.from / 8);
             const col = move.from % 8;
+            const tileSizeFragment = this.tileSize / 100;
+            piece.scaleToHeight(Math.ceil(tileSizeFragment * 90));
+            const piecePadding = Math.ceil(tileSizeFragment * 3) + 1;
             if (this.settings.orientation == 'white') {
-                piece.set('left', col * this.tileSize);
-                piece.set('top', (7 - row) * this.tileSize);
+                piece.set('left', Math.floor(col * this.tileSize) + piecePadding);
+                piece.set('top', Math.floor((7 - row) * this.tileSize) + piecePadding);
             }
             else {
-                piece.set('left', (7 - col) * this.tileSize);
-                piece.set('top', row * this.tileSize);
+                piece.set('left', Math.floor((7 - col) * this.tileSize) + piecePadding);
+                piece.set('top', Math.floor(row * this.tileSize) + piecePadding);
             }
             piece.moveTo(10);
             (_a = this.promotionDialog) === null || _a === void 0 ? void 0 : _a.moveTo(500);
