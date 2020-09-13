@@ -1695,10 +1695,7 @@ class CanvasChessBoard {
     }
     setDarkTile(color) {
         var _a;
-        if (this.theme) {
-            this.theme.tileDark = color;
-        }
-        if (this.tiles.length != 0) {
+        if (this.tiles.length != 0 && this.theme) {
             for (let index = 0; index < 64; index++) {
                 const row = Math.floor(index / 8);
                 if (row % 2 === 0) {
@@ -1714,15 +1711,21 @@ class CanvasChessBoard {
                     }
                 }
             }
+            if (this.labels.length) {
+                this.labels.forEach((label) => {
+                    // @ts-ignore
+                    if (label && label.get('fill') === this.theme.tileDark) {
+                        label.setColor(color);
+                    }
+                });
+            }
+            this.theme.tileDark = color;
             (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.requestRenderAll();
         }
     }
     setLightTile(color) {
         var _a;
-        if (this.theme) {
-            this.theme.tileLight = color;
-        }
-        if (this.tiles.length != 0) {
+        if (this.tiles.length != 0 && this.theme) {
             for (let index = 0; index < 64; index++) {
                 const row = Math.floor(index / 8);
                 if (row % 2 !== 0) {
@@ -1738,6 +1741,15 @@ class CanvasChessBoard {
                     }
                 }
             }
+            if (this.labels.length) {
+                this.labels.forEach((label) => {
+                    // @ts-ignore
+                    if (label && label.get('fill') === this.theme.tileLight) {
+                        label.setColor(color);
+                    }
+                });
+            }
+            this.theme.tileLight = color;
             (_a = this.canvas) === null || _a === void 0 ? void 0 : _a.requestRenderAll();
         }
     }
