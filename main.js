@@ -5592,13 +5592,11 @@ class LayoutService {
             this.controlsElement &&
             this.statusElement &&
             this.headerElement &&
-            this.menuComponent) {
+            this.menuComponent &&
+            this.boardElement) {
             let boardSize = 0;
             const titleSize = 200;
             width = (this.preferredWidthPercentage * width);
-            if (this.boardElement) {
-                this.boardElement.style.left = '0px';
-            }
             if (this.resizeElement) {
                 this.resizeElement.style.left = '-10px';
                 this.resizeElement.style.top = 'calc(50% - 3em)';
@@ -5614,38 +5612,43 @@ class LayoutService {
                 if (boardSize > height) {
                     boardSize = height - padding / 2;
                 }
-                let controlsHeight = boardSize / 7;
-                controlsHeight = controlsHeight > 62 ? 62 : controlsHeight;
+                let controlsHeight = 100;
                 let gsWidth = width - boardSize - padding;
                 (_a = this.board) === null || _a === void 0 ? void 0 : _a.setSize(boardSize);
-                let gsHeight = boardSize - 200 - controlsHeight;
+                let gsHeight = (boardSize - (titleSize + controlsHeight + 48));
                 // game score
                 if (this.layoutDirection) { // RTL
                     this.headerElement.style.right = '2px';
                     this.headerElement.style.left = '';
+                    this.boardElement.style.left = '2px';
+                    this.boardElement.style.right = '';
                 }
                 else {
                     this.headerElement.style.left = '2px';
                     this.headerElement.style.right = '';
+                    this.boardElement.style.right = '2px';
+                    this.boardElement.style.left = '';
                 }
+                this.boardElement.style.top = '2px';
                 this.headerElement.style.height = titleSize + 'px';
                 this.headerElement.style.width = gsWidth + 'px';
                 this.gameScoreElement.style.left = '';
-                this.gameScoreElement.style.top = titleSize + 2 + 'px'; // 64 represents the controls ux
+                this.gameScoreElement.style.top = titleSize + 'px'; // 64 represents the controls ux
                 this.gameScoreElement.style.width = gsWidth + 'px';
                 this.gameScoreElement.style.height = gsHeight + 'px';
                 // controls
                 this.controlsElement.style.left = '';
                 this.controlsElement.style.top =
-                    (gsHeight + (titleSize + 10)).toString() + 'px'; // 64 represents the
+                    (titleSize + gsHeight + 2).toString() + 'px'; // 64 represents the
                 this.controlsElement.style.width = (gsWidth - 2).toString() + 'px';
                 this.controlsElement.style.height = controlsHeight + 'px';
                 this.controlsElement.style.right = '1px';
                 this.statusElement.style.left = '';
+                let statusTop = titleSize + gsHeight + controlsHeight - 24;
                 this.statusElement.style.top =
-                    (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the
+                    statusTop.toString() + 'px'; // 64 represents the
                 this.statusElement.style.width = gsWidth.toString() + 'px';
-                this.statusElement.style.height = controlsHeight + 'px';
+                this.statusElement.style.height = (boardSize - statusTop) + 'px';
                 this.statusElement.style.right = '1px';
                 this.scoreSize.next(gsWidth);
             }
@@ -5662,8 +5665,7 @@ class LayoutService {
                     gsSize = window.innerWidth - boardSize + padding;
                 }
                 (_b = this.board) === null || _b === void 0 ? void 0 : _b.setSize(boardSize);
-                let controlsHeight = boardSize / 7;
-                controlsHeight = controlsHeight > 62 ? 62 : controlsHeight;
+                let controlsHeight = 100;
                 let gsHeight = boardSize - 200 - controlsHeight;
                 // game score
                 this.gameScoreElement.style.left = '';
@@ -5678,8 +5680,8 @@ class LayoutService {
                 this.controlsElement.style.width = (gsSize - 2).toString() + 'px';
                 this.controlsElement.style.right = '1px';
                 this.statusElement.style.left = '';
-                this.statusElement.style.top =
-                    (gsHeight + titleSize + controlsHeight + 62).toString() + 'px'; // 64 represents the
+                let statusTop = titleSize + gsHeight + controlsHeight - 24;
+                this.statusElement.style.top = statusTop + 'px'; // 64 represents the
                 this.statusElement.style.width = gsSize.toString() + 'px';
                 this.statusElement.style.right = '1px';
                 this.scoreSize.next(gsSize);
