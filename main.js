@@ -2428,6 +2428,7 @@ class ChessGame {
         let current = this.startNode;
         if (traversals == 0) {
             items = this.generateRootScore();
+            return items;
         }
         for (let index = 0; index < traversals; ++index) {
             const traversal = this.scorePath[index];
@@ -2437,7 +2438,6 @@ class ChessGame {
                 items.push(gItem);
                 previous = gItem;
                 current = current.next();
-                // go down
             }
             if (traversal.down > 0) {
                 const variations = current.variations();
@@ -3191,6 +3191,10 @@ class GamescoreUxComponent {
     ngAfterViewInit() {
         this.layout.resizeElement = document.getElementById('resize-handle-' + this.olga.UUID);
     }
+    clearGameScore() {
+        this._items = [];
+        this.clearSelection();
+    }
     setGameScoreItems(items) {
         if (items) {
             this._items = items;
@@ -3202,6 +3206,10 @@ class GamescoreUxComponent {
     }
     updateSelection() {
         window.setTimeout(() => { this.selectGameScoreItem(this.currentIndex); }, 75);
+    }
+    clearSelection() {
+        this.currentIndex = -1;
+        window.setTimeout(() => { this.selectGameScoreItem(-1); }, 75);
     }
     navigateToItem(index) {
     }
@@ -6161,7 +6169,6 @@ class OlgaService {
     toggleGameScoreViewType() {
     }
     loadPGN(pgn) {
-        var _a;
         let fIndex = pgn.indexOf('[Set ');
         if (fIndex >= 0) {
             const endSet = pgn.indexOf(']', fIndex);
@@ -6177,16 +6184,15 @@ class OlgaService {
             }
         }
         this._games = _common_kokopu_engine__WEBPACK_IMPORTED_MODULE_2__["ChessGame"].parsePGN(this, pgn);
-        (_a = this._score) === null || _a === void 0 ? void 0 : _a.setGameScoreItems([]);
         if (this._games.length > 0) {
             const game = this._games[0];
             this._game = game;
             window.setTimeout(() => {
-                var _a, _b, _c, _d, _e, _f;
-                (_a = this._score) === null || _a === void 0 ? void 0 : _a.setGameScoreItems((_b = this._game) === null || _b === void 0 ? void 0 : _b.generateGameScore());
-                (_c = this._board) === null || _c === void 0 ? void 0 : _c.setBoardToPosition((_d = this._game) === null || _d === void 0 ? void 0 : _d.getPosition());
-                (_e = this._score) === null || _e === void 0 ? void 0 : _e.updateSelection();
-                const headerData = (_f = this._game) === null || _f === void 0 ? void 0 : _f.generateHeaderData();
+                var _a;
+                // this._score?.setGameScoreItems(this._game?.generateGameScore());
+                // this._board?.setBoardToPosition(this._game?.getPosition());
+                // this._score?.updateSelection();
+                const headerData = (_a = this._game) === null || _a === void 0 ? void 0 : _a.generateHeaderData();
                 if (headerData) {
                     if (this._header) {
                         this._header.gameCount = this._games.length;
@@ -6194,6 +6200,7 @@ class OlgaService {
                         this._header.setHeader(headerData);
                     }
                 }
+                this.selectGame(0);
             }, 1);
         }
     }
@@ -6209,11 +6216,12 @@ class OlgaService {
         if (index >= 0 && index <= this._games.length && this._score) {
             this._game = this._games[index];
             window.setTimeout(() => {
-                var _a, _b, _c, _d, _e, _f;
-                (_a = this._score) === null || _a === void 0 ? void 0 : _a.setGameScoreItems((_b = this._game) === null || _b === void 0 ? void 0 : _b.generateGameScore());
-                (_c = this._board) === null || _c === void 0 ? void 0 : _c.setBoardToPosition((_d = this._game) === null || _d === void 0 ? void 0 : _d.getPosition());
-                (_e = this._score) === null || _e === void 0 ? void 0 : _e.updateSelection();
-                const headerData = (_f = this._game) === null || _f === void 0 ? void 0 : _f.generateHeaderData();
+                var _a, _b, _c, _d, _e, _f, _g;
+                (_a = this._score) === null || _a === void 0 ? void 0 : _a.clearGameScore();
+                (_b = this._score) === null || _b === void 0 ? void 0 : _b.setGameScoreItems((_c = this._game) === null || _c === void 0 ? void 0 : _c.generateGameScore());
+                (_d = this._board) === null || _d === void 0 ? void 0 : _d.setBoardToPosition((_e = this._game) === null || _e === void 0 ? void 0 : _e.getPosition());
+                (_f = this._score) === null || _f === void 0 ? void 0 : _f.updateSelection();
+                const headerData = (_g = this._game) === null || _g === void 0 ? void 0 : _g.generateHeaderData();
                 if (headerData) {
                     if (this._header) {
                         this._header.gameCount = this._games.length;
