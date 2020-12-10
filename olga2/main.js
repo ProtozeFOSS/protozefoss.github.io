@@ -7235,7 +7235,7 @@ class OlgaService {
             const endSet = pgn.indexOf(']', fIndex);
             const iPath = pgn.slice(fIndex, endSet + 1);
             if (endSet >= 0 && endSet - fIndex <= 120) {
-                imagePath = iPath.slice(12, -2);
+                imagePath = iPath.slice(15, -2);
             }
             pgn = pgn.replace(iPath, '');
         }
