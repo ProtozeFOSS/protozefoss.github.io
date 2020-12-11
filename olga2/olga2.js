@@ -1,4 +1,4 @@
-export default class Olga2{
+class Olga2{
     constructor(id, data = null) {
         if(!id){
             throw new Error('Olga2 Constructor requires an id');
