@@ -2,17 +2,13 @@
 <html lang="en">
 <script type="module">
   import Olga2 from "olga2/olga2.js";
-  window.onload = function () {
-    var olga2_test = new Olga2('olga2_test', {pgn:'Hello World', settings:{gsTextColor:'red'}});
-    var settings = {colors:{gsText:'red'}, columns:2};
-    olga2_test.setOlgaSettings(settings);
-  }
 </script>
 <head>
   <meta charset="utf-8">
   <title>Testing Olga 2 Deploy</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="olga2/olga2.js"></script>
   <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
@@ -20,6 +16,12 @@
 </head>
 
 <body class="mat-typography">
-  <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;"></iframe>
+  <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;">
+    <script type="text/javascript">
+      var olga2_test = new Olga2('olga2_test', {pgn:'Hello World', settings:{gsTextColor:'red'}});
+      var settings = {colors:{gsText:'red'}, columns:2};
+      olga2_test.setOlgaSettings(settings);
+    </script>
+  </iframe>
 
 </html>
