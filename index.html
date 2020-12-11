@@ -14,10 +14,10 @@
 
 <body class="mat-typography">
   <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;"></iframe>
-  <script type="text/javascript" src="olga2/olga2.js"></script>
   <script type="text/javascript">
     window.onload = function () {
-      var olga2_test = new Olga2('olga2_test', 'some PGN');
+      import * as Olga2 from "olga2/olga2.js";
+      var olga2_test = new Olga2('olga2_test', {pgn:'Hello World', settings:{gsTextColor:'red'}});
       var settings = {colors:{gsText:'red'}, columns:2};
       olga2_test.setOlgaSettings(settings);
     }
