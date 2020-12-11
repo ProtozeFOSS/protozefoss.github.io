@@ -11,14 +11,16 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 
 </head>
-
-<body class="mat-typography">
-  <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;">
-    <script type="text/javascript">
+<script type="text/javascript">
+  function loadOlga() {
       var olga2_test = new Olga2('olga2_test', {pgn:'Hello World', settings:{gsTextColor:'red'}});
       var settings = {colors:{gsText:'red'}, columns:2};
       olga2_test.setOlgaSettings(settings);
-    </script>
+  }
+</script>
+<body class="mat-typography">    
+  <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;" onload="loadOlga();">
+
   </iframe>
 
 </html>
