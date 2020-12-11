@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
   <script type="text/javascript" src="olga2/olga2.js">
-    var initializeOlga = function () {
+    window.onload = function () {
       var olga2_test = new Olga2('olga2_test', 'some PGN');
       var settings = {colors:{gsText:'red'}, columns:2};
       olga2_test.setOlgaSettings(settings);
@@ -18,6 +18,6 @@
   </script>
 </head>
 
-<body class="mat-typography" onload="initializeOlga();">
+<body class="mat-typography">
   <iframe id="olga2_test" src="olga2.html" style="width:100%;height:900px;"></iframe>
 </html>
