@@ -12,7 +12,7 @@ class Olga2{
             }
             if(data.pgn) {
                 console.log('Pgn: ');
-                console.log(pgn);
+                console.log(data.pgn);
             }
         }
     }
