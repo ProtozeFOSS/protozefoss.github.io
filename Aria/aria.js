@@ -5,11 +5,11 @@ const JSRPC = {
     getSettings: 'getSettings'
 }
 
-class Olga2 {
+class Aria {
     static ATTACHED = false;
     #attachEvents() {
         window.addEventListener('message', this.#receiveMessage.bind(this), false);
-        Olga2.ATTACHED = true;
+        Aria.ATTACHED = true;
     }
     #receiveMessage(event) {
         // get message (json)
@@ -40,27 +40,17 @@ class Olga2 {
 
     constructor(id, data = null) {
         if (!id) {
-            throw new Error('Olga2 Constructor requires an id');
+            throw new Error('Aria Constructor requires an id');
             return;
         }
         this.instance = document.getElementById(id);
         if (data && this.instance) {
             this.id = id;
-            if (!Olga2.ATTACHED) {
+            if (!Aria.ATTACHED) {
                 this.#attachEvents();
-=======
-class Aria{
-    constructor(id, data = null) {
-        if(!id){
-            throw new Error('Aria Constructor requires an id');
-            return;
-        }
-        this.id = id;
-        console.log('Searching for aria instance with id:' + id);
-        if(data) {
+            }
             if(data.settings) {
                 console.log(data.settings);
->>>>>>> Moving codebase to new Aria project:Aria/aria.js
             }
             if (data.pgn) {
                 this.setPGN(data.pgn);
@@ -106,15 +96,3 @@ class Aria{
     onSettings = function (settings) { }
     onOpenMenu = function (data) { }
 }
-
-
-
-
-<<<<<<< HEAD:olga2/olga2.js
-=======
-    setSettings(settings_obj) {
-        console.log('recieved user settings:')
-        console.log(settings_obj);
-    }
-}
->>>>>>> Moving codebase to new Aria project:Aria/aria.js
