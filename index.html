@@ -13,11 +13,10 @@
 
 </head>
 <script type="text/javascript">
-<<<<<<< HEAD
   function loadOlga() {
     const TestPGNData = '[Set "Testing Olga 2"]' +
       '[SetDate "October 8th - December 31st, 1990"]' +
-      '[PlayerImages "assets/images/players/"]' +
+      '[PlayerImages "Aria/assets/images/players/"]' +
       '[PlayerData "{"Garry Kasparov":{"born":"April 13th 1963","image":"Garry-Kasparov.png", "elo":2812}, "Anatoly Karpov":{"image":"Anatoly-Karpov.png", "elo":2617, "born":"May 23th 1951"}, \
     "Egemen Gulden":{"born":"2000", "image":"Egemen-Gulden.png", "elo":2118}, "Andrei Macovei":{"born":"2000", "image":"Andrei-Macovei.png", "elo":2453}, \
     "Robert James Fischer":{"born":"March 9th 1943", "image":"Bobby-Fischer-BW.png", "elo":2780}, "Hans Berliner":{"born":"Jan 27th 1929", "image":"Hans-Berliner.png"}, \
@@ -151,7 +150,7 @@
       '32. Kg1 exd3 33. Nb3 Qxf4 34. Nd2 Qxe5 35. Nf1 g5 36. Rd2 Qd5 37. a3 g4 38. Ne3\n' +
       'Qf3 39. Nf1 g3 40. Rg2 b5 41. Nd2 Qe3+ 42. Kf1 Kc7 43. b3 Qe5 0-1\n'
     '\n';
-    var olga2_test = new Olga2('olga2_test', { pgn: TestPGNData });
+    var olga2_test = new Aria('aria_test', { pgn: TestPGNData });
     olga2_test.onSettings = (settings) => {
       console.log('Received settings in parent:');
       console.log(settings);
@@ -160,20 +159,10 @@
   }
 </script>
 
-<body class="mat-typography " style="display:flex;flex-flow:column nowrap;justify-content: center;">
-  <iframe id="olga2_test"
-    src="olga2/?settings=eyJ0aGVtZXMiOnsiLS1nc1RleHRDb2xvclBDIjoid2hpdGUiLCItLWdzVGV4dENvbG9yIjoiYmxhY2siLCItLWdzQmFja2dyb3VuZFBDIjoiIzM1MzUzNSIsIi0tZ3NCb3JkZXJQQyI6IiIsIi0tZ3NUZXh0Q29sb3JWQSI6IndoaXRlIiwiLS1nc0JhY2tncm91bmRWQSI6IiMzNTM1MzUiLCItLWdzQm9yZGVyVkEiOiJibGFjayAxcHggc29saWQiLCItLWdzVGV4dENvbG9yQU4iOiIjQUVENkYxIiwiLS1nc0JhY2tncm91bmRBTiI6IiMzMzMzMzMiLCItLWdzQm9yZGVyQU4iOiIiLCItLWdzVGV4dENvbG9ySEciOiJvcmFuZ2UiLCItLWdzQmFja2dyb3VuZEhHIjoiIzM1MzUzNSIsIi0tZ3NCYWNrZ3JvdW5kIjoidHJhbnNwYXJlbnQiLCItLWdzTGlzdEJhY2tncm91bmQiOiIjMzUzNTM1IiwiLS1nc0JvcmRlckhHIjoiIiwiLS1nc0Fubm90YXRpb25Db2xvckhHIjoibGlnaHRjb3JhbCIsIi0tbWVCYWNrZ3JvdW5kIjoiIzM1MzUzNSIsIi0tYm9hcmRMYWJlbERhcmsiOiIjODEzODhmIiwiLS1ib2FyZExhYmVsTGlnaHQiOiIjZTBmZmZiIiwiLS1ib2FyZEJHRGFyayI6IiMyMzNENEQiLCItLWJvYXJkQkdMaWdodCI6IiNGQ0NBNDYiLCItLWNzQmFja2dyb3VuZCI6IiM4MTM4OGYiLCItLWNzQ29sb3IiOiIjZTBmZmZiIiwiLS1jc0ZpbGwiOiIjMDBmZmZmZmYiLCItLWNzRmlsbDIiOiIjMDBmZmZmZmYiLCItLWNzQWNjZW50IjoiI2UyNTQwMCIsIi0tY3NBY2NlbnQyIjoiI2UyNTQwMCIsIi0tZ3NGb250U2l6ZSI6MTIsIi0tZ3NGb250U2l6ZUFOIjo4LCItLWdzRm9udFNpemVIRyI6OCwiLS1nc0ZvbnRTaXplVkEiOjgsIi0tZ3NGb250U2l6ZVBDIjo4fSwibGF5b3V0Ijp7fSwib2xnYSI6e319"
-    style="width:100%;height:900px;" onload="loadOlga();">
-=======
-  function loadAria() {
-      var aria_test = new Aria('aria_test', {pgn:'Hello World', settings:{gsTextColor:'red'}});
-      var settings = {colors:{gsText:'red'}, columns:2};
-      aria_test.setSettings(settings);
-  }
-</script>
-<body class="mat-typography">    
-  <iframe id="aria_test" src="aria.html" style="width:100%;height:900px;" onload="loadAria();">
->>>>>>> Moving codebase to new Aria project
+<body class="mat-typography " style="display:flex;flex-flow:column nowrap;justify-content: center;margin:0px;padding:0px;">
+  <iframe id="aria_test"
+    src="Aria/?settings=eyJ0aGVtZSI6eyJnc1RleHRDb2xvclZBIjoid2hpdGUiLCJnc0JhY2tncm91bmRWQSI6IiMzNTM1MzUiLCJnc0JvcmRlclZBIjoiYmxhY2sgMXB4IHNvbGlkIiwiZ3NUZXh0Q29sb3JBTiI6IiNBRUQ2RjEiLCJnc0JhY2tncm91bmRBTiI6IiMzMzMzMzMiLCJnc0JvcmRlckFOIjoiIiwiZ3NUZXh0Q29sb3JIRyI6Im9yYW5nZSIsImdzQmFja2dyb3VuZEhHIjoiIzM1MzUzNSIsImdzQmFja2dyb3VuZCI6InRyYW5zcGFyZW50IiwiZ3NMaXN0QmFja2dyb3VuZCI6IiMzNTM1MzUiLCJnc0JvcmRlckhHIjoiIiwiZ3NBbm5vdGF0aW9uQ29sb3JIRyI6ImxpZ2h0Y29yYWwiLCJtZUJhY2tncm91bmQiOiIjMzUzNTM1IiwiYm9hcmRMYWJlbERhcmsiOiIjODEzODhmIiwiYm9hcmRMYWJlbExpZ2h0IjoiI2UwZmZmYiIsImJvYXJkQkdEYXJrIjoiIzIzM0Q0RCIsImJvYXJkQkdMaWdodCI6IiNGQ0NBNDYiLCJjc0ZpbGxOViI6ImxpbmVhci1ncmFkaWVudCg5MGRlZywgcmdiYSgwLDI4LDE1MywxKSAwJSwgcmdiYSg2Nyw3NCwyNTEsMSkgMzUlLCByZ2JhKDI1NSwwLDAsMSkgMzYlLCByZ2JhKDI1NSwwLDAsMSkgMTAwJSkiLCJjc0ZpbGxRQSI6ImxpbmVhci1ncmFkaWVudCg5MGRlZywgcmdiYSgwLDI4LDE1MywxKSAwJSwgcmdiYSg2Nyw3NCwyNTEsMSkgMzUlLCByZ2JhKDI1NSwwLDAsMSkgMzYlLCByZ2JhKDI1NSwwLDAsMSkgMTAwJSkiLCJjc0ZpbGwyUUEiOiJ0cmFuc3BhcmVudCIsImNzQWNjZW50UUEiOiJ3aGl0ZSIsImNzQm9yZGVyMlFBIjoid2hpdGUgc29saWQgMnB4IiwiY3NCb3JkZXIyTlYiOiJibGFjayIsImNzQWNjZW50MlFBIjoid2hpdGUiLCJjc0FjY2VudE5WIjoid2hpdGUiLCJjc0FjY2VudDJOViI6IndoaXRlIiwiY3NGaWxsMk5WIjoidHJhbnNwYXJlbnQiLCJnc0ZvbnRTaXplIjoxNiwiZ3NGb250U2l6ZUFOIjo4LCJnc0ZvbnRTaXplSEciOjE2LCJnc0ZvbnRTaXplVkEiOjh9LCJsYXlvdXQiOnt9LCJhcmlhIjp7fX0%3D"
+    style="margin:0px;padding:0px;margin-left:1%;width:98%;height:1600px;border-style:none;" onload="loadOlga();">
 
   </iframe>
 

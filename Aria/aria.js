@@ -1,4 +1,3 @@
-<<<<<<< HEAD:olga2/olga2.js
 const JSRPC = {
     setPGN: 'setPGN',
     onSettings: 'onSettings',
