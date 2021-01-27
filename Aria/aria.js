@@ -16,6 +16,11 @@ class Aria {
         this.aria = instance.aria;
         this.theme = instance.theme;
         this.layout = instance.layout;
+        this.layout.layoutChanged = (width, height, state) =>{
+            const hPx = height + 'px';
+            const current = this.element.style.height;
+            this.element.style.height = current != hPx ? hPx:current;
+        }
     }
     setPGN(pgn) {
         this.aria.loadPGN(pgn);        
@@ -31,11 +36,4 @@ class Aria {
         return {theme: this.theme.settings(), aria:this.aria.settings(), layout:this.layout.settings()};
     }
 
-    layoutChanged(data) {
-        const hPx = data.height + 'px';
-        console.log(data);
-        if(data.height > 0 && this.element.style.height != hPx){
-            this.element.style.height = hPx;
-        }
-    }
 }
