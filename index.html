@@ -3,19 +3,15 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Testing Aria Deploy</title>
+  <title>Aria</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="text/javascript" src="/Aria/aria.js"></script>
-  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+  <script type="text/javascript" src="/Aria/aria.js"></script>>
 
 </head>
 <script type="text/javascript">
-  function loadOlga() {
-    const TestPGNData = '[Set "Testing Olga 2"]' +
-      '[SetDate "October 8th - December 31st, 1990"]' +
+  function loadAria() {
+    const TestPGNData = '[SetDate "October 8th - December 31st, 1990"]' +
       '[PlayerImages "Aria/assets/images/players/"]' +
       '[PlayerData "{"Garry Kasparov":{"born":"April 13th 1963","image":"Garry-Kasparov.png", "elo":2812}, "Anatoly Karpov":{"image":"Anatoly-Karpov.png", "elo":2617, "born":"May 23th 1951"}, \
     "Egemen Gulden":{"born":"2000", "image":"Egemen-Gulden.png", "elo":2118}, "Andrei Macovei":{"born":"2000", "image":"Andrei-Macovei.png", "elo":2453}, \
@@ -150,19 +146,41 @@
       '32. Kg1 exd3 33. Nb3 Qxf4 34. Nd2 Qxe5 35. Nf1 g5 36. Rd2 Qd5 37. a3 g4 38. Ne3\n' +
       'Qf3 39. Nf1 g3 40. Rg2 b5 41. Nd2 Qe3+ 42. Kf1 Kc7 43. b3 Qe5 0-1\n'
     '\n';
-    var olga2_test = new Aria('aria_test', { pgn: TestPGNData });
-    olga2_test.onSettings = (settings) => {
-      console.log('Received settings in parent:');
-      console.log(settings);
-    }
-    olga2_test.getSettings();
+    var start_ply = 0;
+    var lc = '#ffe2b8';
+    var dc = '#4d1f00';
+    // If using Olga Data
+    // var sesdata = document.getElementById("olga-data");
+    // if(sesdata !== undefined && sesdata !== null){
+    // if(sesdata !== undefined && sesdata !== null){
+    //   var lc = sesdata.getAttribute("color_light");
+    //   var dc = sesdata.getAttribute("color_dark");
+    //   var start_ply = sesdata.getAttribute("start_ply");
+    //   if(start_ply){
+    //       var ply = parseInt(start_ply);
+    //       if(ply){
+    //           start_ply = ply;
+    //       }else{
+    //           start_ply = 0;
+    //       }
+    //   }
+    //   TestPGNData = sesdata.getAttribute("pgn");
+    // }
+    var iframe = new Aria('aria_test');
+    iframe.setPGN(TestPGNData);
+    var theme = {boardBGDark:dc, boardBGLight:lc};
+    iframe.setTheme(theme);
+    iframe.aria.navigateToNode(start_ply);
+    window.setTimeout(()=>{
+    console.log(iframe.getSettings());
+    iframe.aria.moveToStart();}, 5000);
   }
 </script>
 
 <body class="mat-typography " style="display:flex;flex-flow:column nowrap;justify-content: center;margin:0px;padding:0px;">
   <iframe id="aria_test"
     src="Aria/?settings=eyJ0aGVtZSI6eyJnc1RleHRDb2xvclZBIjoid2hpdGUiLCJnc0JhY2tncm91bmRWQSI6IiMzNTM1MzUiLCJnc0JvcmRlclZBIjoiYmxhY2sgMXB4IHNvbGlkIiwiZ3NUZXh0Q29sb3JBTiI6IiNBRUQ2RjEiLCJnc0JhY2tncm91bmRBTiI6IiMzMzMzMzMiLCJnc0JvcmRlckFOIjoiIiwiZ3NUZXh0Q29sb3JIRyI6Im9yYW5nZSIsImdzQmFja2dyb3VuZEhHIjoiIzM1MzUzNSIsImdzQmFja2dyb3VuZCI6InRyYW5zcGFyZW50IiwiZ3NMaXN0QmFja2dyb3VuZCI6IiMzNTM1MzUiLCJnc0JvcmRlckhHIjoiIiwiZ3NBbm5vdGF0aW9uQ29sb3JIRyI6ImxpZ2h0Y29yYWwiLCJtZUJhY2tncm91bmQiOiIjMzUzNTM1IiwiYm9hcmRMYWJlbERhcmsiOiIjODEzODhmIiwiYm9hcmRMYWJlbExpZ2h0IjoiI2UwZmZmYiIsImJvYXJkQkdEYXJrIjoiIzIzM0Q0RCIsImJvYXJkQkdMaWdodCI6IiNGQ0NBNDYiLCJjc0ZpbGxOViI6ImxpbmVhci1ncmFkaWVudCg5MGRlZywgcmdiYSgwLDI4LDE1MywxKSAwJSwgcmdiYSg2Nyw3NCwyNTEsMSkgMzUlLCByZ2JhKDI1NSwwLDAsMSkgMzYlLCByZ2JhKDI1NSwwLDAsMSkgMTAwJSkiLCJjc0ZpbGxRQSI6ImxpbmVhci1ncmFkaWVudCg5MGRlZywgcmdiYSgwLDI4LDE1MywxKSAwJSwgcmdiYSg2Nyw3NCwyNTEsMSkgMzUlLCByZ2JhKDI1NSwwLDAsMSkgMzYlLCByZ2JhKDI1NSwwLDAsMSkgMTAwJSkiLCJjc0ZpbGwyUUEiOiJ0cmFuc3BhcmVudCIsImNzQWNjZW50UUEiOiJ3aGl0ZSIsImNzQm9yZGVyMlFBIjoid2hpdGUgc29saWQgMnB4IiwiY3NCb3JkZXIyTlYiOiJibGFjayIsImNzQWNjZW50MlFBIjoid2hpdGUiLCJjc0FjY2VudE5WIjoid2hpdGUiLCJjc0FjY2VudDJOViI6IndoaXRlIiwiY3NGaWxsMk5WIjoidHJhbnNwYXJlbnQiLCJnc0ZvbnRTaXplIjoxNiwiZ3NGb250U2l6ZUFOIjo4LCJnc0ZvbnRTaXplSEciOjE2LCJnc0ZvbnRTaXplVkEiOjh9LCJsYXlvdXQiOnt9LCJhcmlhIjp7fX0%3D"
-    style="margin:0px;padding:0px;margin-left:1%;width:98%;height:1600px;border-style:none;" onload="loadOlga();">
+    style="margin:0px;padding:0px;margin-left:1%;width:98%;height:600px;border-style:none;" onload="loadAria();">
 
   </iframe>
 
