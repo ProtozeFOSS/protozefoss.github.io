@@ -19,6 +19,7 @@ function Aria(id, iFrame=true, resize=true) {
             const hPx = height + 'px';
             const current = this.element.style.height;
             this.element.style.height = current != hPx ? hPx:current;
+            this.element.style.maxHeight = current != hPx ? hPx:current;
         }
     }
     return instance;
